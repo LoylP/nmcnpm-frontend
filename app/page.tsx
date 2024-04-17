@@ -1,12 +1,12 @@
 import Image from "next/image";
 import React from "react";
-import LoginPage from "./Register/page";
-import RegisterPage from "./Register/RegisterPage";
-import Nav from "../components/Nav";
+import LoginPage from "./(auth)/login/LoginPage";
+import RegisterPage from "./(auth)/register/RegisterPage";
+import Nav from "../components/Nav/Nav";
 import "./page.css";
-import Buttons from "../components/Buttons";
-import Header from "../components/Header";
-import Sample from "../components/Sample";
+import Buttons from "../components/Buttons/Buttons";
+import Header from "../components/Header/Header";
+import Sample from "../components/Sample/Sample";
 
 function Page() {
   return (

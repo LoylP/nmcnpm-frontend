@@ -6,8 +6,8 @@ import NavItem from "./NavItem";
 const defaultIconSize = "2rem";
 
 const items = [
-  { label: "Home", icon: <BiHomeAlt size={defaultIconSize} />, active: true },
-  { label: "Room", icon: <BiBed size={defaultIconSize} /> },
+  { label: "Home", icon: <BiHomeAlt size={defaultIconSize} />},
+  { label: "Room", icon: <BiBed size={defaultIconSize} />},
   { label: "About", icon: <BiInfoCircle size={defaultIconSize} /> },
 ];
 
@@ -34,9 +34,10 @@ const Index = () => {
           onClick={() => setIsNavMenuMobileOpen(!isNavMenuMobileOpen)}
         />
       </div>
-
       <ul
-        className={`mx-4 my-2${isNavMenuMobileOpen ? "" : " hidden"} md:block`}
+        className={`mx-4 my-2 ${
+          isNavMenuMobileOpen ? "" : " hidden"
+        } md:block `}
       >
         <NavItemsContainer />
       </ul>
