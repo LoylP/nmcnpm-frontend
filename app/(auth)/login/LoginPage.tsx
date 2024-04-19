@@ -3,19 +3,31 @@ import Link from "next/link";
 import { BiHomeAlt, BiBrightness } from "react-icons/bi";
 import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
+import { POST } from "@/app/api/route";
 
 const LoginPage = () => {
-  const [username, setUsername] = useState("");
+  const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (username === "admin" && password === "password") {
-      console.log("Login successful");
-    } else {
-      setErrorMessage("Invalid username or password");
+    try {
+      const body = {
+        userName: userName,
+        password: password,
+      };
+      const res = await POST({ body }, "v1/auth/login");
+
+      const data = await res.json();
+
+      console.log(data);
+      // Redirect hoặc điều hướng người dùng đến trang khác
+      // Ví dụ: router.push("/dashboard");
+    } catch (error) {
+      console.error("Error logging in:", error);
+      setErrorMessage("Something went wrong. Please try again.");
     }
   };
 
@@ -70,12 +82,7 @@ const LoginPage = () => {
           </p>
 
           {errorMessage && (
-            <p
-              className="text-red-500 mb-4"
-              style={{ marginLeft: "50px", width: "350px" }}
-            >
-              {errorMessage}{" "}
-            </p>
+            <p className="text-red-500 mb-4 w-full mx-14">{errorMessage} </p>
           )}
 
           <form onSubmit={handleSubmit}>
@@ -84,15 +91,14 @@ const LoginPage = () => {
                 htmlFor="username"
                 className="block text-sm font-medium text-gray-600"
               >
-                Username
+                UserName
               </label>
               <input
                 type="text"
                 id="username"
                 className="mt-1 p-2 w-full border rounded-md"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                style={{ width: "367.6px" }}
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
               />
             </div>
 
@@ -109,21 +115,20 @@ const LoginPage = () => {
                 className="mt-1 p-2 w-full border rounded-md"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                style={{ width: "367.6px" }}
               />
             </div>
             <div className="mb-4 mx-14">
               <input type="checkbox" id="remember" className="mr-2" />
               <label htmlFor="remember">Remember for 30 days</label>
-              <button className="font-medium text-base text-blue-800 mb-5 mx-7">
+              <button className="font-medium text-base text-blue-800 mb-5 ml-20">
                 Forgot password
               </button>
             </div>
 
-            <div className="flex justify-end mx-14" style={{ width: "380px" }}>
+            <div className="flex justify-end w-full">
               <button
                 type="submit"
-                className="px-5 py-2 bg-sky-800 text-white rounded-md hover:bg-slate-700"
+                className="px-5 py-2 mx-2 bg-sky-800 text-white rounded-md hover:bg-slate-700"
               >
                 Login
               </button>
@@ -131,7 +136,7 @@ const LoginPage = () => {
                 {" "}
                 <button
                   type="submit"
-                  className="px-5 py-2 mx-2 bg-sky-800 text-white rounded-md hover:bg-slate-700"
+                  className="px-5 py-2 mr-14 bg-sky-800 text-white rounded-md hover:bg-slate-700"
                 >
                   Register
                 </button>

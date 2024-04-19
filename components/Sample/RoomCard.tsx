@@ -2,11 +2,16 @@ import Image from "next/image";
 import { BiMoneyWithdraw } from "react-icons/bi";
 import { Room } from "./RoomData";
 
-const RoomCard = ({ room }: { room: Room }) => {
+interface RoomCardProps {
+  room: Room;
+  onRoomClick: (room: Room) => void;
+}
+
+const RoomCard: React.FC<RoomCardProps> = ({ room, onRoomClick }) => {
   const { src, title, main, money } = room;
 
   return (
-    <div className="card">
+    <div className="card" onClick={() => onRoomClick(room)}>
       <div className="relative w-full h-40">
         <Image
           src={src}
