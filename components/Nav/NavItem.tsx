@@ -14,8 +14,8 @@ const NavItem = ({ item }: { item: Item }) => {
     <li
       className={`flex p-2 justify-end items-center hover:bg-slate-500 cursor-pointer${item}`}
     >
-      <h3 className="mr-2">{label}</h3>
       {icon}
+      <h3 className="mr-2">{label}</h3>
     </li>
   );
 };

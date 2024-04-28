@@ -10,9 +10,14 @@ import Sample from "../components/Sample/Sample";
 
 function Page() {
   return (
-    <div className="grid md:grid-cols-5">
+    <div className="flex">
       <Nav />
-      <main className="px-12 py-6 md:col-span-4 bg-blue-50">
+      {/* <main className="flex-1  px-12 py-6 md:col-span-4 bg-blue-500">
+        <Buttons />
+        <Header />
+        <Sample />
+      </main> */}
+      <main className="flex-1 px-12 py-6 md:col-span-4 bg-blue-50">
         <Buttons />
         <Header />
         <Sample />
