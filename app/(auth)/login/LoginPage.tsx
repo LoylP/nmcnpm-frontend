@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { BiHomeAlt, BiBrightness } from "react-icons/bi";
-import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
 import { POST } from "@/app/api/route";
 
@@ -142,13 +141,9 @@ const LoginPage = () => {
                 </button>
               </Link>
             </div>
-            <div className="w-full flex items-center justify-center relative mt-5">
+            <div className="w-full flex items-center justify-center relative mt-10">
               <div className="w-full h-[1px] bg-black"></div>
-              <p className="text-1g absolute text-black/80 bg-[#f5f5f5]">or</p>
-            </div>
-            <div className="w-full text-[#060606] my-2 mt-5 font-semibold bg-white border-b hover:bg-slate-400 border-black rounded-md p-4 text-center justify-center flex items-center">
-              <FcGoogle className="mx-2 text-3xl" />
-              Sign in with google
+              <p className="text-1g absolute text-black/80 bg-[#f5f5f5]">end</p>
             </div>
           </form>
         </div>

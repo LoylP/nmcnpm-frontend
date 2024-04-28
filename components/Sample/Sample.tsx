@@ -24,7 +24,7 @@ const Sample = () => {
       {selectedRoom && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg  ">
-            <h2 className="text-6xl font-bold mb-4">
+            <h2 className="text-5xl font-bold mb-4">
               {selectedRoom.title} - {selectedRoom.main}
             </h2>
             <div className="grid grid-cols-3 gap-4 mb-4">
@@ -78,15 +78,19 @@ const Sample = () => {
                 <div>Máy lọc không khí </div>
               </div>
             </div>
-
-            <button onClick={() => setSelectedRoom(null)} className="mt-4 btn">
-              Close
-            </button>
+            <div className="flex justify-center md:justify-end">
+              <button
+                onClick={() => setSelectedRoom(null)}
+                className="mt-4 mr-4 btn "
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
       <div className="flex justify-center">
-        <button className="btn hover:scale-125 transition ease-out duration-500">
+        <button className="btn hover:scale-125 transition ease-out duration-500  ">
           Load more
         </button>
       </div>

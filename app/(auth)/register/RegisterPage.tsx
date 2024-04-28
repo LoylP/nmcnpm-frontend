@@ -101,163 +101,163 @@ const RegisterPage = () => {
               {errorMessage}{" "}
             </p>
           )}
+          <div className="overflow-y-auto max-h-80">
+            <form onSubmit={handleSubmit}>
+              <div className="mb-4 mx-14">
+                <label
+                  htmlFor="userName"
+                  className="block text-sm font-medium text-gray-600"
+                >
+                  Username
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  className="mt-1 p-2 w-full border rounded-md"
+                  value={userName}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4 mx-14">
-              <label
-                htmlFor="userName"
-                className="block text-sm font-medium text-gray-600"
-              >
-                Username
-              </label>
-              <input
-                type="text"
-                id="username"
-                className="mt-1 p-2 w-full border rounded-md"
-                value={userName}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </div>
-
-            <div className="mb-4 mx-14">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-600"
-              >
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                className="mt-1 p-2 w-full border rounded-md"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div className="mb-4 mx-14">
-              <label
-                htmlFor="Email"
-                className="block text-sm font-medium text-gray-600"
-              >
-                Email
-              </label>
-              <input
-                type="text"
-                id="email"
-                className="mt-1 p-2 w-full border rounded-md"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="mb-4 mx-14">
-              <label
-                htmlFor="fullName"
-                className="block text-sm font-medium text-gray-600"
-              >
-                FullName
-              </label>
-              <input
-                type="text"
-                id="fullName"
-                className="mt-1 p-2 w-full border rounded-md"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-              />
-            </div>
-            <div className="mb-4 mx-14">
-              <label
-                htmlFor="Phone"
-                className="block text-sm font-medium text-gray-600"
-              >
-                Phone
-              </label>
-              <input
-                type="text"
-                id="Phone"
-                className="mt-1 p-2 w-full border rounded-md"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </div>
-            <div className="mb-4 mx-14">
-              <label
-                htmlFor="Gender"
-                className="block text-sm font-medium text-gray-600"
-              >
-                Gender
-              </label>
-              <input
-                type="text"
-                id="Gender"
-                className="mt-1 p-2 w-full border rounded-md"
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-              />
-            </div>
-            <div className="mb-4 mx-14">
-              <label
-                htmlFor="Salary"
-                className="block text-sm font-medium text-gray-600"
-              >
-                Salary
-              </label>
-              <input
-                type="text"
-                id="Salary"
-                className="mt-1 p-2 w-full border rounded-md"
-                value={salary}
-                onChange={(e) => setSalary(e.target.value)}
-              />
-            </div>
-            <div className="mb-4 mx-14">
-              <label
-                htmlFor="City"
-                className="block text-sm font-medium text-gray-600"
-              >
-                City
-              </label>
-              <input
-                type="text"
-                id="City"
-                className="mt-1 p-2 w-full border rounded-md"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-              />
-            </div>
-            <div className="mb-4 mx-14">
-              <label
-                htmlFor="Country"
-                className="block text-sm font-medium text-gray-600"
-              >
-                Country
-              </label>
-              <input
-                type="text"
-                id="Country"
-                className="mt-1 p-2 w-full border rounded-md"
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-              />
-            </div>
-
-            <div className="flex justify-center w-full">
-              <button
-                type="submit"
-                className="px-40 py-2 bg-sky-800 text-white rounded-md hover:bg-slate-700"
-              >
-                Sign up
-              </button>
-            </div>
-            <p className="text-sm font-light text-black dark:text-black mt-6 flex justify-center">
-              Already have an account{" "}
-              <Link
-                href="../login"
-                className="font-medium text-primary-600 hover:underline dark:text-primary-500 text-slate-800 mx-2"
-              >
-                Sign In
-              </Link>
-            </p>
-          </form>
+              <div className="mb-4 mx-14">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-600"
+                >
+                  Password
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  className="mt-1 p-2 w-full border rounded-md"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+              <div className="mb-4 mx-14">
+                <label
+                  htmlFor="Email"
+                  className="block text-sm font-medium text-gray-600"
+                >
+                  Email
+                </label>
+                <input
+                  type="text"
+                  id="email"
+                  className="mt-1 p-2 w-full border rounded-md"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div className="mb-4 mx-14">
+                <label
+                  htmlFor="fullName"
+                  className="block text-sm font-medium text-gray-600"
+                >
+                  FullName
+                </label>
+                <input
+                  type="text"
+                  id="fullName"
+                  className="mt-1 p-2 w-full border rounded-md"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                />
+              </div>
+              <div className="mb-4 mx-14">
+                <label
+                  htmlFor="Phone"
+                  className="block text-sm font-medium text-gray-600"
+                >
+                  Phone
+                </label>
+                <input
+                  type="text"
+                  id="Phone"
+                  className="mt-1 p-2 w-full border rounded-md"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </div>
+              <div className="mb-4 mx-14">
+                <label
+                  htmlFor="Gender"
+                  className="block text-sm font-medium text-gray-600"
+                >
+                  Gender
+                </label>
+                <input
+                  type="text"
+                  id="Gender"
+                  className="mt-1 p-2 w-full border rounded-md"
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                />
+              </div>
+              <div className="mb-4 mx-14">
+                <label
+                  htmlFor="Salary"
+                  className="block text-sm font-medium text-gray-600"
+                >
+                  Salary
+                </label>
+                <input
+                  type="text"
+                  id="Salary"
+                  className="mt-1 p-2 w-full border rounded-md"
+                  value={salary}
+                  onChange={(e) => setSalary(e.target.value)}
+                />
+              </div>
+              <div className="mb-4 mx-14">
+                <label
+                  htmlFor="City"
+                  className="block text-sm font-medium text-gray-600"
+                >
+                  City
+                </label>
+                <input
+                  type="text"
+                  id="City"
+                  className="mt-1 p-2 w-full border rounded-md"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                />
+              </div>
+              <div className="mb-4 mx-14">
+                <label
+                  htmlFor="Country"
+                  className="block text-sm font-medium text-gray-600"
+                >
+                  Country
+                </label>
+                <input
+                  type="text"
+                  id="Country"
+                  className="mt-1 p-2 w-full border rounded-md"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                />
+              </div>
+            </form>
+          </div>
+          <div className="flex justify-center w-full">
+            <button
+              type="submit"
+              className="px-40 py-2 bg-sky-800 text-white rounded-md hover:bg-slate-700"
+            >
+              Sign up
+            </button>
+          </div>
+          <p className="text-sm font-light text-black dark:text-black mt-6 flex justify-center">
+            Already have an account{" "}
+            <Link
+              href="../login"
+              className="font-medium text-primary-600 hover:underline dark:text-primary-500 text-slate-800 mx-2"
+            >
+              Sign In
+            </Link>
+          </p>
         </div>
       </div>
     </div>

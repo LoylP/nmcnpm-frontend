@@ -6,8 +6,8 @@ import NavItem from "./NavItem";
 const defaultIconSize = "2rem";
 
 const items = [
-  { label: "Home", icon: <BiHomeAlt size={defaultIconSize} />},
-  { label: "Room", icon: <BiBed size={defaultIconSize} />},
+  { label: "Home", icon: <BiHomeAlt size={defaultIconSize} /> },
+  { label: "Room", icon: <BiBed size={defaultIconSize} /> },
   { label: "About", icon: <BiInfoCircle size={defaultIconSize} /> },
 ];
 
