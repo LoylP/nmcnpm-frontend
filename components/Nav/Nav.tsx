@@ -32,20 +32,21 @@ const Index = () => {
   ];
 
   return (
-    <div
+    <nav
       className={` ${
         open ? "w-72" : "w-20 "
-      } bg-sky-950 p-5  pt-8 relative duration-300`}
+      } bg-sky-950 p-5 py-10 duration-300 relative`}
     >
       <div
-        className={`absolute text-white text-2xl cursor-pointer -right-3 bg-black top-9 w-7 border-sky-950 border-2 rounded-full ${
-          !open && "rotate-180 bg-black"
+        className={`fixed top-2 left-2 text-white  text-3xl  cursor-pointer bg-sky-950  w-10 border-sky-950 border-2 rounded-full ${
+          !open && "rotate-180 left-12"
         }`}
         onClick={() => setOpen(!open)}
       >
         <BiSolidChevronsLeft />
       </div>
-      <div className="flex gap-x-4 items-center">
+
+      <div className="flex gap-x-4 mt-2 items-center fixed">
         <div
           className={`cursor-pointer duration-500 text-3xl text-white ${
             open && "rotate-[360deg]"
@@ -66,7 +67,7 @@ const Index = () => {
           onClick={() => setOpen(!open)}
         />
       </div>
-      <ul className="pt-6">
+      <ul className="py-12 fixed ">
         {Menus.map((Menu, index) => (
           <li
             key={index}
@@ -82,7 +83,7 @@ const Index = () => {
           </li>
         ))}
       </ul>
-    </div>
+    </nav>
   );
 };
 
