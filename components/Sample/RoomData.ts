@@ -15,7 +15,6 @@ export interface Room {
   src: StaticImageData;
   title: string;
   main: string;
-  money: string;
 }
 
 export const RoomData: Room[] = [
@@ -23,66 +22,55 @@ export const RoomData: Room[] = [
     src: Bed1Basic,
     title: "1 giường đôi",
     main: "Standard",
-    money: "???",
   },
   {
     src: Bed2Basic,
     title: "2 giường đôi",
     main: "Standard",
-    money: "???",
   },
   {
     src: SingleBed,
     title: "1 giường đơn",
     main: "Standard",
-    money: "???",
   },
   {
     src: SingleBed2,
     title: "2 giường đơn",
     main: "Standard",
-    money: "???",
   },
   {
     src: Bed1,
     title: "1 giường đôi",
     main: "Superior",
-    money: "???",
   },
   {
     src: Bed2,
     title: "2 giường đôi",
     main: "Superior",
-    money: "???",
   },
   {
     src: BedVip,
     title: "Phòng VIP ",
     main: "Special",
-    money: "???",
   },
   {
     src: Lobby,
     title: "Sảnh khách sạn",
     main: "Lobby",
-    money: "???",
   },
   {
     src: Swim,
     title: "Hồ bơi",
     main: "Free",
-    money: "???",
   },
   {
     src: Activities,
     title: "Activities",
     main: "Free",
-    money: "???",
   },
   {
     src: Bar,
     title: "Bar",
     main: "Superior",
-    money: "???",
   },
 ];
