@@ -1,16 +1,16 @@
 import Image from "next/image";
-import { Room } from "./RoomData";
 import { Space } from "./RoomData";
 
-interface RoomCardProps {
-  room: Room;
-  onRoomClick: (room: Room) => void;
+interface SpaceCardProps {
+  space: Space;
+  onSpaceClick: (space: Space) => void;
 }
-const RoomCard: React.FC<RoomCardProps> = ({ room, onRoomClick }) => {
-  const { src, title, type } = room;
+
+const SpaceCard: React.FC<SpaceCardProps> = ({ space, onSpaceClick }) => {
+  const { src, title, type } = space;
 
   return (
-    <div className="card" onClick={() => onRoomClick(room)}>
+    <div className="card" onClick={() => onSpaceClick(space)}>
       <div className="relative w-full h-40">
         <Image
           src={src}
@@ -28,4 +28,4 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onRoomClick }) => {
   );
 };
 
-export default RoomCard;
+export default SpaceCard;

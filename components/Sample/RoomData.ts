@@ -17,6 +17,12 @@ export interface Room {
   type: string;
 }
 
+export interface Space {
+  src: StaticImageData;
+  title: string;
+  type: string;
+}
+
 export const RoomData: Room[] = [
   {
     src: Bed1Basic,
@@ -53,6 +59,9 @@ export const RoomData: Room[] = [
     title: "Phòng VIP ",
     type: "Luxury",
   },
+];
+
+export const SpaceData: Space[] = [
   {
     src: Lobby,
     title: "Sảnh khách sạn",
