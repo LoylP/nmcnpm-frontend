@@ -25,7 +25,7 @@ const Sample = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg  ">
             <h2 className="text-5xl font-bold mb-4">
-              {selectedRoom.title} - {selectedRoom.main}
+              {selectedRoom.title} - {selectedRoom.type}
             </h2>
             <div className="grid grid-cols-3 gap-4 mb-4">
               {[1, 2, 3].map((_, index) => (

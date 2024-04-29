@@ -8,7 +8,7 @@ interface RoomCardProps {
 }
 
 const RoomCard: React.FC<RoomCardProps> = ({ room, onRoomClick }) => {
-  const { src, title, main } = room;
+  const { src, title, type } = room;
 
   return (
     <div className="card" onClick={() => onRoomClick(room)}>
@@ -23,7 +23,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onRoomClick }) => {
       </div>
       <div className="p-4 text-white bg-sky-800">
         <h4>{title}</h4>
-        <p>{main}</p>
+        <p>{type}</p>
       </div>
     </div>
   );

@@ -14,63 +14,63 @@ import { StaticImageData } from "next/image";
 export interface Room {
   src: StaticImageData;
   title: string;
-  main: string;
+  type: string;
 }
 
 export const RoomData: Room[] = [
   {
     src: Bed1Basic,
     title: "1 giường đôi",
-    main: "Standard",
+    type: "Standard",
   },
   {
     src: Bed2Basic,
     title: "2 giường đôi",
-    main: "Standard",
+    type: "Standard",
   },
   {
     src: SingleBed,
     title: "1 giường đơn",
-    main: "Standard",
+    type: "Standard",
   },
   {
     src: SingleBed2,
     title: "2 giường đơn",
-    main: "Standard",
+    type: "Standard",
   },
   {
     src: Bed1,
     title: "1 giường đôi",
-    main: "Superior",
+    type: "Superior",
   },
   {
     src: Bed2,
     title: "2 giường đôi",
-    main: "Superior",
+    type: "Superior",
   },
   {
     src: BedVip,
     title: "Phòng VIP ",
-    main: "Special",
+    type: "Luxury",
   },
   {
     src: Lobby,
     title: "Sảnh khách sạn",
-    main: "Lobby",
+    type: "Lobby",
   },
   {
     src: Swim,
     title: "Hồ bơi",
-    main: "Free",
+    type: "Service",
   },
   {
     src: Activities,
     title: "Activities",
-    main: "Free",
+    type: "Service",
   },
   {
     src: Bar,
     title: "Bar",
-    main: "Superior",
+    type: "Service",
   },
 ];
