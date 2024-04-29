@@ -1,23 +1,32 @@
 "use client";
-import { BiBrightness } from "react-icons/bi";
-import { FcGoogle } from "react-icons/fc";
-import { useState } from "react";
 import Link from "next/link";
+import { BiHomeAlt, BiBrightness } from "react-icons/bi";
+import { useState } from "react";
+import { POST } from "@/app/api/route";
 
-const RegisterPage = () => {
-  const [fullname, setFullName] = useState("");
-  const [username, setUsername] = useState("");
+const LoginPage = () => {
+  const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (fullname && username && password) {
-      console.log("Register successful");
-    } else {
-      setErrorMessage("Please fill in all fields");
+    try {
+      const body = {
+        userName: userName,
+        password: password,
+      };
+      const res = await POST({ body }, "v1/auth/login");
+
+      const data = await res.json();
+
+      console.log(data);
+      // Redirect hoặc điều hướng người dùng đến trang khác
+      // Ví dụ: router.push("/dashboard");
+    } catch (error) {
+      console.error("Error logging in:", error);
+      setErrorMessage("Something went wrong. Please try again.");
     }
   };
 
@@ -33,6 +42,15 @@ const RegisterPage = () => {
           backgroundPosition: "center",
         }}
       >
+        <Link href="../">
+          {" "}
+          <button
+            type="submit"
+            className="mx-2 my-2 text-white rounded-md hover:bg-slate-700"
+          >
+            <BiHomeAlt className="text-5xl text-white mx-2 my-2" />
+          </button>
+        </Link>
         <div className="flex items-center mx-10 mt-40">
           <h1 className="text-gray-100 text-6xl font-normal">
             Good Hotel for good experience
@@ -53,52 +71,33 @@ const RegisterPage = () => {
         </div>
         <div className="flex flex-col bg-slate-100 p-10 rounded-lg shadow-lg mb-0 mx-20">
           <h2
-            className="text-4xl font-bold mb-6 mx-14 "
+            className="text-5xl font-bold mb-6 mx-14 "
             style={{ marginBottom: "10px" }}
           >
-            Create an Account
+            Login
           </h2>
+          <p className="text-sm mb-5 mx-14 p-0 text-gray-600">
+            Welcome Back! Please enter your details.
+          </p>
 
           {errorMessage && (
-            <p
-              className="text-red-500 mb-4"
-              style={{ marginLeft: "50px", width: "350px" }}
-            >
-              {errorMessage}{" "}
-            </p>
+            <p className="text-red-500 mb-4 w-full mx-14">{errorMessage} </p>
           )}
 
           <form onSubmit={handleSubmit}>
             <div className="mb-4 mx-14">
               <label
-                htmlFor="fullname"
-                className="block text-sm font-medium text-gray-600"
-              >
-                FullName
-              </label>
-              <input
-                type="text"
-                id="fullname"
-                className="mt-1 p-2 w-full border rounded-md"
-                value={fullname}
-                onChange={(e) => setFullName(e.target.value)}
-                style={{ width: "367.6px" }}
-              />
-            </div>
-            <div className="mb-4 mx-14">
-              <label
                 htmlFor="username"
                 className="block text-sm font-medium text-gray-600"
               >
-                Username
+                UserName
               </label>
               <input
                 type="text"
                 id="username"
                 className="mt-1 p-2 w-full border rounded-md"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                style={{ width: "367.6px" }}
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
               />
             </div>
 
@@ -115,43 +114,37 @@ const RegisterPage = () => {
                 className="mt-1 p-2 w-full border rounded-md"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                style={{ width: "367.6px" }}
               />
             </div>
             <div className="mb-4 mx-14">
-              <label
-                htmlFor="Email"
-                className="block text-sm font-medium text-gray-600"
-              >
-                Email
-              </label>
-              <input
-                type="text"
-                id="email"
-                className="mt-1 p-2 w-full border rounded-md"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                style={{ width: "367.6px" }}
-              />
-            </div>
-
-            <div className="flex justify-end mx-14" style={{ width: "380px" }}>
-              <button
-                type="submit"
-                className="px-40 py-2 bg-sky-800 text-white rounded-md hover:bg-slate-700"
-              >
-                Sign up
+              <input type="checkbox" id="remember" className="mr-2" />
+              <label htmlFor="remember">Remember for 30 days</label>
+              <button className="font-medium text-base text-blue-800 mb-5 ml-20">
+                Forgot password
               </button>
             </div>
-            <p className="text-sm font-light text-black dark:text-black mt-6 flex justify-center">
-              Already have an account{" "}
-              <Link
-                href="../Login"
-                className="font-medium text-primary-600 hover:underline dark:text-primary-500 text-slate-800 mx-2"
+
+            <div className="flex justify-end w-full">
+              <button
+                type="submit"
+                className="px-5 py-2 mx-2 bg-sky-800 text-white rounded-md hover:bg-slate-700"
               >
-                Sign In
+                Login
+              </button>
+              <Link href="../register">
+                {" "}
+                <button
+                  type="submit"
+                  className="px-5 py-2 mr-14 bg-sky-800 text-white rounded-md hover:bg-slate-700"
+                >
+                  Register
+                </button>
               </Link>
-            </p>
+            </div>
+            <div className="w-full flex items-center justify-center relative mt-10">
+              <div className="w-full h-[1px] bg-black"></div>
+              <p className="text-1g absolute text-black/80 bg-[#f5f5f5]">end</p>
+            </div>
           </form>
         </div>
       </div>
@@ -159,4 +152,4 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage;
+export default LoginPage;
