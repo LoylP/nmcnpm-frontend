@@ -13,6 +13,9 @@ module.exports = {
       fontFamily: {
         barlow: ['"Barlow Condensed"', "sans-serif"],
       },
+      backgroundImage: {
+        "banner-bg": "url('../public/assets/bg_hotel.png')",
+      },
       colors: {
         primary: "#16405B",
       },
