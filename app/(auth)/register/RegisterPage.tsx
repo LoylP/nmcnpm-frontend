@@ -12,7 +12,6 @@ const RegisterPage = () => {
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [gender, setGender] = useState("");
-  const [salary, setSalary] = useState("");
   const [field, setField] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
@@ -29,7 +28,6 @@ const RegisterPage = () => {
         fullName: fullName,
         phone: phone,
         gender: gender,
-        salary: salary,
         city: city,
         country: country,
       };
@@ -194,21 +192,7 @@ const RegisterPage = () => {
                   onChange={(e) => setGender(e.target.value)}
                 />
               </div>
-              <div className="mb-4 mx-14">
-                <label
-                  htmlFor="Salary"
-                  className="block text-sm font-medium text-gray-600"
-                >
-                  Salary
-                </label>
-                <input
-                  type="text"
-                  id="Salary"
-                  className="mt-1 p-2 w-full border rounded-md"
-                  value={salary}
-                  onChange={(e) => setSalary(e.target.value)}
-                />
-              </div>
+
               <div className="mb-4 mx-14">
                 <label
                   htmlFor="City"
