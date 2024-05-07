@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { setCookie } from "cookies-next";
 import { BiHomeAlt, BiBrightness } from "react-icons/bi";
 import { useState } from "react";
 import { POST } from "@/app/api/route";
@@ -22,6 +23,7 @@ const LoginPage = () => {
       const data = await res.json();
 
       console.log(data);
+      setCookie("access_token", data.authentication_token.access_token, { maxAge: 300 });
       // Redirect hoặc điều hướng người dùng đến trang khác
       // Ví dụ: router.push("/dashboard");
     } catch (error) {

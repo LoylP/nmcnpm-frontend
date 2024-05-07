@@ -8,15 +8,14 @@ export async function POST(request: any, route: string) {
         method: "POST",
         headers: {
           "Content-Type": "application/json", // đảm bảo rằng bạn đã cấu hình content type cho body của bạn
-          "Access-Control-Allow-Origin": "http://localhost:5000", // hoặc '*' nếu bạn muốn cho phép từ tất cả các nguồn
+          "Access-Control-Allow-Origin": "http://localhost:5050", // hoặc '*' nếu bạn muốn cho phép từ tất cả các nguồn
           "Access-Control-Allow-Methods": "POST",
           "Access-Control-Allow-Headers": "Content-Type",
           // Thêm các headers khác nếu cần
         },
         body: JSON.stringify(body), // Chuyển body thành dạng JSON
       }
-    );
-    console.log(res);
+    )
     // Trả về kết quả từ backend cho client
     return res;
   } catch (error) {
