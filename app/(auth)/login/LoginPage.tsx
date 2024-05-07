@@ -133,17 +133,13 @@ const LoginPage = () => {
               </button>
               <Link href="../register">
                 {" "}
-                <button
-                  type="submit"
-                  className="px-5 py-2 mr-14 bg-sky-800 text-white rounded-md hover:bg-slate-700"
-                >
+                <button className="px-5 py-2 mr-14 bg-sky-800 text-white rounded-md hover:bg-slate-700">
                   Register
                 </button>
               </Link>
             </div>
             <div className="w-full flex items-center justify-center relative mt-10">
               <div className="w-full h-[1px] bg-black"></div>
-              <p className="text-1g absolute text-black/80 bg-[#f5f5f5]">end</p>
             </div>
           </form>
         </div>

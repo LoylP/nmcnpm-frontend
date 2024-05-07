@@ -16,7 +16,7 @@ export async function POST(request: any, route: string) {
         body: JSON.stringify(body), // Chuyển body thành dạng JSON
       }
     );
-
+    console.log(res);
     // Trả về kết quả từ backend cho client
     return res;
   } catch (error) {

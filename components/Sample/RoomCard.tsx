@@ -11,7 +11,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onRoomClick }) => {
 
   return (
     <div className="card" onClick={() => onRoomClick(room)}>
-      <div className="relative w-full h-40">
+      <div className="relative w-full h-80">
         <Image
           src={src}
           alt={title}
