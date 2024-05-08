@@ -4,11 +4,16 @@ import { setCookie } from "cookies-next";
 import { BiHomeAlt, BiBrightness } from "react-icons/bi";
 import { useState } from "react";
 import { POST } from "@/app/api/route";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const LoginPage = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +28,9 @@ const LoginPage = () => {
       const data = await res.json();
 
       console.log(data);
-      setCookie("access_token", data.authentication_token.access_token, { maxAge: 300 });
+      setCookie("access_token", data.authentication_token.access_token, {
+        maxAge: 300,
+      });
       // Redirect hoặc điều hướng người dùng đến trang khác
       // Ví dụ: router.push("/dashboard");
     } catch (error) {
@@ -110,14 +117,27 @@ const LoginPage = () => {
               >
                 Password
               </label>
-              <input
-                type="password"
-                id="password"
-                className="mt-1 p-2 w-full border rounded-md"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  className="mt-1 p-2 w-full border rounded-md"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  className="absolute top-1/2 right-2 transform -translate-y-1/2 focus:outline-none"
+                  onClick={toggleShowPassword}
+                >
+                  {showPassword ? (
+                    <FaEyeSlash className="h-6 w-6 text-gray-400" />
+                  ) : (
+                    <FaEye className="h-6 w-6 text-gray-400" />
+                  )}
+                </button>
+              </div>
             </div>
+
             <div className="mb-4 mx-14">
               <input type="checkbox" id="remember" className="mr-2" />
               <label htmlFor="remember">Remember for 30 days</label>
