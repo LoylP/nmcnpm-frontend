@@ -1,11 +1,12 @@
 import Image from "next/image";
 import React from "react";
-import Nav from "../../components/Nav/Nav";
+import Menu from "../../components/Nav/Menu";
 import "./page.css";
-import Header from "../../components/Header/Header";
+import Intro from "../../components/Intro/Intro";
 import Sample from "../../components/Sample/Sample";
-import Navbar from "../../components/Nav/Navbar";
+import Header from "../../components/Nav/Header";
 import Banner from "../../components/Nav/Banner";
+import Footer from "@/components/Footer/Footer";
 
 function Page() {
   const services = [
@@ -17,20 +18,23 @@ function Page() {
   ];
   return (
     <div className="flex ">
-      <Nav />
+      <Menu />
       <main className="flex-1 md:col-span-4 bg-blue-50">
         <div className="w-full bg-banner-bg bg-center ">
           <div className="w-full bg-black opacity-60 text-white">
-            <Navbar services={services} isUser={true} />
+            <Header services={services} isUser={true} />
             <Banner />
           </div>
         </div>
 
         <div className="px-12 py-6">
-          <Header />
+          <Intro />
         </div>
         <div className="px-12 py-6">
           <Sample />
+        </div>
+        <div>
+          <Footer />
         </div>
       </main>
     </div>
