@@ -1,7 +1,7 @@
 import { FaLocationDot } from "react-icons/fa6";
 import { SiHotelsdotcom } from "react-icons/si";
 
-const Index = () => (
+const Intro = () => (
   <div className="">
     <h1 className="mt-6 text-cyan-900"> Introduce</h1>
     <div className="flex gap-x-4 mt-6 items-center text-black">
@@ -55,4 +55,4 @@ const Index = () => (
   </div>
 );
 
-export default Index;
+export default Intro;

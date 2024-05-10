@@ -14,8 +14,8 @@ import {
 import { SiHotelsdotcom } from "react-icons/si";
 import { IoSettings } from "react-icons/io5";
 
-const Index = () => {
-  const [open, setOpen] = useState(true);
+const Menu = () => {
+  const [open, setOpen] = useState(false);
   const defaultIconSize = "2rem";
   const Menus = [
     { title: "Home", icon: <BiHomeAlt size={defaultIconSize} /> },
@@ -83,4 +83,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Menu;
