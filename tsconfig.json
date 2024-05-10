@@ -26,7 +26,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "middleware.js"
+    "middleware.js",
+    "components/Dashboard/sidebar/menuLink"
   ],
   "exclude": ["node_modules"]
 }
