@@ -2,15 +2,17 @@
 import Link from "next/link";
 import { setCookie } from "cookies-next";
 import { BiHomeAlt, BiBrightness } from "react-icons/bi";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { POST } from "@/app/api/route";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { GET } from "@/app/api/route";
 
 const LoginPage = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [users, setUsers] = useState([]);
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -28,6 +30,7 @@ const LoginPage = () => {
       const data = await res.json();
 
       console.log(data);
+
       setCookie("access_token", data.authentication_token.access_token, {
         maxAge: 300,
       });
@@ -38,6 +41,19 @@ const LoginPage = () => {
       setErrorMessage("Something went wrong. Please try again.");
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await GET("v1/user");
+        console.log(res);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-blue-200">
