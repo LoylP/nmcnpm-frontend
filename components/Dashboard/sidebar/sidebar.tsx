@@ -5,9 +5,8 @@ import {
   MdDashboard,
   MdSupervisedUserCircle,
   MdWork,
-  MdAnalytics,
+  MdHome,
   MdOutlineSettings,
-  MdHelpCenter,
 } from "react-icons/md";
 import { FaHistory } from "react-icons/fa";
 import { GrUserAdmin } from "react-icons/gr";
@@ -33,6 +32,11 @@ const menuItems = [
         icon: <GrUserAdmin />,
       },
       {
+        title: "Home",
+        path: "/",
+        icon: <MdHome />,
+      },
+      {
         title: "History",
         path: "/admin/history",
         icon: <FaHistory />,
@@ -46,22 +50,12 @@ const menuItems = [
   },
 
   {
-    title: "User",
+    title: "Function",
     list: [
       {
         title: "Settings",
         path: "/admin/settings",
         icon: <MdOutlineSettings />,
-      },
-      {
-        title: "Help",
-        path: "/admin/help",
-        icon: <MdHelpCenter />,
-      },
-      {
-        title: "Reports",
-        path: "/admin/reports",
-        icon: <MdAnalytics />,
       },
     ],
   },

@@ -31,11 +31,12 @@ const RegisterPage = () => {
         gender: gender,
         salary: 1,
       };
+
       let genderId;
       if (body.gender == "Male") genderId = 1;
       else if (body.gender == "Female") genderId = 2;
       else genderId = 3;
-      body.gender = genderId
+      body.gender = genderId;
       const res = await POST({ body }, "v1/auth/register");
 
       const data = await res.json();

@@ -1,81 +1,141 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import {
+  BiSolidObjectsHorizontalLeft,
   BiSolidChevronsLeft,
-  BiHomeAlt,
-  BiSearchAlt,
   BiSolidUserCircle,
   BiInfoCircle,
   BiMessage,
-  BiMenu,
-  BiFile,
+  BiListCheck,
+  BiDownload,
   BiBed,
 } from "react-icons/bi";
 import { SiHotelsdotcom } from "react-icons/si";
 import { IoSettings } from "react-icons/io5";
 
+interface MenuItem {
+  path: string;
+  icon: JSX.Element;
+  title: string;
+}
+
 const Menu = () => {
   const [open, setOpen] = useState(false);
   const defaultIconSize = "2rem";
-  const Menus = [
-    { title: "Home", icon: <BiHomeAlt size={defaultIconSize} /> },
-    { title: "Inbox", icon: <BiMessage size={defaultIconSize} /> },
+  const pathname = usePathname();
+
+  const Menus: { title: string; list: MenuItem[] }[] = [
     {
-      title: "Accounts",
-      icon: <BiSolidUserCircle size={defaultIconSize} />,
-      gap: true,
+      title: "Pages",
+      list: [
+        {
+          title: "Introduce",
+          path: "/",
+          icon: <BiSolidObjectsHorizontalLeft size={defaultIconSize} />,
+        },
+        {
+          title: "Explore ",
+          path: "/explore",
+          icon: <BiListCheck size={defaultIconSize} />,
+        },
+        {
+          title: "Load More",
+          path: "/loadmore",
+          icon: <BiDownload size={defaultIconSize} />,
+        },
+        {
+          title: "Account",
+          path: "/account",
+          icon: <BiSolidUserCircle size={defaultIconSize} />,
+        },
+      ],
     },
-    { title: "Room ", icon: <BiBed size={defaultIconSize} /> },
-    { title: "Search", icon: <BiSearchAlt size={defaultIconSize} /> },
-    { title: "About", icon: <BiInfoCircle size={defaultIconSize} /> },
-    { title: "Files ", icon: <BiFile size={defaultIconSize} />, gap: true },
-    { title: "Setting", icon: <IoSettings size={defaultIconSize} /> },
+    {
+      title: "Function",
+      list: [
+        {
+          title: "Inbox",
+          path: "/inbox",
+          icon: <BiMessage size={defaultIconSize} />,
+        },
+        {
+          title: "Setting",
+          path: "/setting",
+          icon: <IoSettings size={defaultIconSize} />,
+        },
+        {
+          title: "About",
+          path: "/about",
+          icon: <BiInfoCircle size={defaultIconSize} />,
+        },
+      ],
+    },
   ];
 
   return (
     <nav
-      className={` ${
-        open ? "w-72" : "w-20 "
-      } bg-sky-950 p-5 py-10 duration-300 relative`}
+      className={`bg-sky-950 p-5 py-10 duration-300 relative ${
+        open ? "w-64" : "w-24"
+      }`}
     >
       <div
         className={`fixed top-2 left-4 flex items-center text-white text-3xl cursor-pointer bg-sky-950 w-24 border-sky-950 border-2 rounded-full ${
-          !open && "rotate-180 top-2 left-0 z-10"
+          !open && "rotate-180 top-2 left-0 z-10 "
         }`}
         onClick={() => setOpen(!open)}
       >
         <BiSolidChevronsLeft />
       </div>
 
-      <div className="flex gap-x-4 mt-2 items-center fixed text-yellow-400">
+      <div className="flex mt-3 items-center fixed text-yellow-400">
         <div
-          className={`cursor-pointer duration-500 text-3xl  ${
-            open && "rotate-[360deg]"
+          className={`cursor-pointer duration-500 text-4xl ${
+            open && "rotate-[360deg] "
           }`}
         >
-          <SiHotelsdotcom className="mr-2" />
+          <SiHotelsdotcom className="mr-0" />
         </div>
         <h1
-          className={` origin-left font-medium text-3xl duration-200 ${
+          className={`origin-left font-medium text-5xl duration-200 ${
             !open && "scale-0"
           }`}
         >
-          HNP.com
+          H
+        </h1>
+        <h1
+          className={`origin-left font-medium text-5xl duration-200 text-green-400 ${
+            !open && "scale-0"
+          }`}
+        >
+          NP
         </h1>
       </div>
-      <ul className="py-12 fixed ">
-        {Menus.map((Menu, index) => (
-          <li
-            key={index}
-            className={`flex rounded-md p-2 cursor-pointer hover:bg-slate-500 text-yellow-100 text-sm items-center gap-x-4 
-              ${Menu.gap ? "mt-9" : "mt-2"} ${
-              index === 0 && "bg-light-white"
-            } `}
-          >
-            <div>{Menu.icon}</div>
-            <span className={`${!open && "hidden"} origin-left duration-200`}>
-              {Menu.title}
+      <ul className="py-20 fixed">
+        {Menus.map((cat, index) => (
+          <li key={index}>
+            <span className="text-gray-400 font-bold text-xs mx-2 mt-10 ">
+              {cat.title}
             </span>
+            {cat.list.map((item, idx) => (
+              <Link
+                href={item.path}
+                key={idx}
+                className={`flex items-center p-3 gap-2 my-2 rounded-lg text-yellow-100 ${
+                  pathname === item.path
+                    ? "bg-sky-900 text-white"
+                    : "hover:bg-sky-900"
+                }`}
+              >
+                {item.icon}
+                <span
+                  className={`${!open && "hidden"} origin-left duration-200`}
+                >
+                  {item.title}
+                </span>
+              </Link>
+            ))}
           </li>
         ))}
       </ul>
