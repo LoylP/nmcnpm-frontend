@@ -5,14 +5,14 @@ import { BiHomeAlt, BiBrightness } from "react-icons/bi";
 import React, { useEffect, useState } from "react";
 import { POST } from "@/app/api/route";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { GET } from "@/app/api/route";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [users, setUsers] = useState([]);
+  const router = useRouter();
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -30,9 +30,13 @@ const LoginPage = () => {
       const data = await res.json();
 
       console.log(data);
-      setCookie("access_token", data.authentication_token.access_token, {
-        maxAge: 300,
+      setCookie("access_token", data.access_token, {
+        maxAge: 600,
       });
+      setCookie("role_id", data.role_id, {
+        maxAge: 600,
+      });
+      router.push("/");
       // Redirect hoặc điều hướng người dùng đến trang khác
       // Ví dụ: router.push("/dashboard");
     } catch (error) {

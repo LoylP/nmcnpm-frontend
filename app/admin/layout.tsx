@@ -17,15 +17,19 @@ export default function AdminLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className={styles.container}>
-      <div className={styles.menu}>
-        <Sidebar />
-      </div>
-      <div className={styles.content}>
-        <Navbar />
-        {children}
-        <Footer />
-      </div>
-    </div>
+    <html lang="en">
+      <body>
+        <div className={styles.container}>
+          <div className={styles.menu}>
+            <Sidebar />
+          </div>
+          <div className={styles.content}>
+            <Navbar />
+            {children}
+            <Footer />
+          </div>
+        </div>
+      </body>
+    </html>
   );
 }
