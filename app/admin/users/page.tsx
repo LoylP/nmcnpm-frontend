@@ -2,8 +2,8 @@
 import Search from "@/components/Dashboard/search/search";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { GET } from "@/app/api/route";
+import React, { Suspense, useEffect, useState } from "react";
+import { GET } from "@/app/utils";
 
 // Define the User type
 interface role {
@@ -34,6 +34,7 @@ const UsersPage: React.FC = () => {
     const fetchData = async () => {
       try {
         const res = await GET("v1/admin/user");
+        // @ts-ignore
         const data = await res.json();
         setUsers(data.data); // Assuming the data is inside a `data` property
       } catch (error) {
@@ -47,7 +48,9 @@ const UsersPage: React.FC = () => {
   return (
     <div className="bg-slate-800 p-5 rounded-lg mt-10">
       <div className="flex items-center justify-between">
-        <Search placeholder="Search for a user..." />
+        <Suspense>
+          <Search placeholder="Search for a user..." />
+        </Suspense>
         <Link href="/admin/users/add">
           <button className="p-1 bg-green-500 text-white border rounded-md cursor-pointer hover:bg-yellow-500">
             + Add New

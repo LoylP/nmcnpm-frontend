@@ -24,7 +24,7 @@ function Page() {
       <main className="flex-1 md:col-span-4 bg-blue-50">
         <div className="w-full bg-banner-bg bg-center ">
           <div className="w-full bg-black opacity-60 text-white">
-            <Header services={services} isUser={true} isCheck={true} />
+            <Header services={services} isUser={true} />
             <Banner />
           </div>
         </div>

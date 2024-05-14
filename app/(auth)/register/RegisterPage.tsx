@@ -2,7 +2,7 @@
 import { BiHomeAlt, BiBrightness } from "react-icons/bi";
 import { useState } from "react";
 import Link from "next/link";
-import { POST } from "@/app/api/route";
+import { POST } from "@/app/utils";
 
 const RegisterPage = () => {
   const [userName, setUserName] = useState("");

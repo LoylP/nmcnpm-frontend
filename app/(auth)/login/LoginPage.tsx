@@ -3,7 +3,7 @@ import Link from "next/link";
 import { setCookie } from "cookies-next";
 import { BiHomeAlt, BiBrightness } from "react-icons/bi";
 import React, { useEffect, useState } from "react";
-import { POST } from "@/app/api/route";
+import { POST } from "@/app/utils";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
