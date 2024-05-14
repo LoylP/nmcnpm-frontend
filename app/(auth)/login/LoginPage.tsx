@@ -36,6 +36,9 @@ const LoginPage = () => {
       setCookie("role_id", data.role_id, {
         maxAge: 600,
       });
+      setCookie("userName", userName, {
+        maxAge: 600,
+      });
       router.push("/");
       // Redirect hoặc điều hướng người dùng đến trang khác
       // Ví dụ: router.push("/dashboard");
