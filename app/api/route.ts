@@ -36,6 +36,7 @@ export async function GET(route: string) {
       `${process.env.NEXT_PUBLIC_BACKEND_HOST}:${process.env.NEXT_PUBLIC_BACKEND_PORT}/${route}`,
       {
         method: "GET",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "http://localhost:5050",

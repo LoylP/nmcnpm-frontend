@@ -30,7 +30,6 @@ const LoginPage = () => {
       const data = await res.json();
 
       console.log(data);
-
       setCookie("access_token", data.authentication_token.access_token, {
         maxAge: 300,
       });
@@ -41,19 +40,6 @@ const LoginPage = () => {
       setErrorMessage("Something went wrong. Please try again.");
     }
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await GET("v1/user");
-        console.log(res);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-blue-200">
