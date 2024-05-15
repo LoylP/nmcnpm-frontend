@@ -3,16 +3,16 @@ import Link from "next/link";
 import { setCookie } from "cookies-next";
 import { BiHomeAlt, BiBrightness } from "react-icons/bi";
 import React, { useEffect, useState } from "react";
-import { POST } from "@/app/api/route";
+import { POST } from "@/app/utils";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { GET } from "@/app/api/route";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [users, setUsers] = useState([]);
+  const router = useRouter();
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -30,13 +30,16 @@ const LoginPage = () => {
       const data = await res.json();
 
       console.log(data);
-
       setCookie("access_token", data.access_token, {
-        maxAge: 300,
+        maxAge: 600,
       });
       setCookie("role_id", data.role_id, {
-        maxAge: 300,
+        maxAge: 600,
       });
+      setCookie("userName", userName, {
+        maxAge: 600,
+      });
+      router.push("/");
       // Redirect hoặc điều hướng người dùng đến trang khác
       // Ví dụ: router.push("/dashboard");
     } catch (error) {
@@ -44,20 +47,6 @@ const LoginPage = () => {
       setErrorMessage("Something went wrong. Please try again.");
     }
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await GET("v1/admin/user");
-        console.log("res: ", res);
-
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-blue-200">
