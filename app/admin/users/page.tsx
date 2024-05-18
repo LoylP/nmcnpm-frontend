@@ -3,7 +3,7 @@ import Search from "@/components/Dashboard/search/search";
 import Image from "next/image";
 import Link from "next/link";
 import React, { Suspense, useEffect, useState } from "react";
-import { GET } from "@/app/utils";
+import { GET, DELETE } from "@/app/utils";
 
 // Define the User type
 interface role {
@@ -45,6 +45,20 @@ const UsersPage: React.FC = () => {
     fetchData();
   }, []);
 
+  const handleDelete = async (userId: number) => {
+    try {
+      const res = await DELETE(null, `v1/admin/user/${userId}`);
+      if (res.ok) {
+        // Xóa người dùng khỏi danh sách sau khi xóa thành công
+        setUsers(users.filter((user) => user.id !== userId));
+      } else {
+        console.error("Failed to delete user:", await res.json());
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
+
   return (
     <div className="bg-slate-800 p-5 rounded-lg mt-10">
       <div className="flex items-center justify-between">
@@ -66,6 +80,7 @@ const UsersPage: React.FC = () => {
             <th>Phone</th>
             <th>CreatedAt</th>
             <th>Role</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -74,7 +89,7 @@ const UsersPage: React.FC = () => {
               <td>
                 <div className="flex mt-2 item-center gap-5">
                   <Image
-                    src={user.avatar || "/assets/avt_admin.webp"} // Use the user's avatar if available
+                    src="/avt_admin.webp"
                     alt="User Avatar"
                     width={40}
                     height={40}
@@ -84,12 +99,15 @@ const UsersPage: React.FC = () => {
                 </div>
               </td>
               <td>{user.fullName}</td>
-              <td>{user.email || "N/A"}</td> {/* Ensure email field exists */}
+              <td>{user.email || "N/A"}</td>
               <td>{user.phone}</td>
               <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-              <td>{user.role.id}</td>
+              <td>{user.role.name}</td>
               <td>
-                <button className="text-red-500 hover:text-red-700">
+                <button
+                  onClick={() => handleDelete(user.id)}
+                  className="text-red-500 hover:text-red-700"
+                >
                   Delete
                 </button>
                 <Link href={`/admin/users/edit/${user.id}`}>
