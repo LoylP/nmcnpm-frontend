@@ -39,7 +39,12 @@ const LoginPage = () => {
       setCookie("userName", userName, {
         maxAge: 600,
       });
-      router.push("/");
+
+      if (data.role_id === 1) {
+        router.push("/admin");
+      } else {
+        router.push("/");
+      }
       // Redirect hoặc điều hướng người dùng đến trang khác
       // Ví dụ: router.push("/dashboard");
     } catch (error) {

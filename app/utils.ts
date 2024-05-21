@@ -65,6 +65,7 @@ export async function DELETE(request: any, route: string) {
       `${process.env.NEXT_PUBLIC_BACKEND_HOST}:${process.env.NEXT_PUBLIC_BACKEND_PORT}/${route}`,
       {
         method: "DELETE",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json", // đảm bảo rằng bạn đã cấu hình content type cho body của bạn
           "Access-Control-Allow-Origin": "http://localhost:5050", // hoặc '*' nếu bạn muốn cho phép từ tất cả các nguồn

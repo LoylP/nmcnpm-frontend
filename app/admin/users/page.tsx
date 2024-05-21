@@ -36,7 +36,7 @@ const UsersPage: React.FC = () => {
         const res = await GET("v1/admin/user");
         // @ts-ignore
         const data = await res.json();
-        setUsers(data.data); // Assuming the data is inside a `data` property
+        setUsers(data.data);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -47,9 +47,16 @@ const UsersPage: React.FC = () => {
 
   const handleDelete = async (userId: number) => {
     try {
-      const res = await DELETE(null, `v1/admin/user/${userId}`);
+      const confirmDelete = window.confirm(
+        "Are you sure you want to delete this user?"
+      );
+      if (!confirmDelete) return;
+
+      const res = await DELETE(
+        {},
+        `v1/admin/user/delete_user_by_condition?condition=id&value=${userId}`
+      );
       if (res.ok) {
-        // Xóa người dùng khỏi danh sách sau khi xóa thành công
         setUsers(users.filter((user) => user.id !== userId));
       } else {
         console.error("Failed to delete user:", await res.json());
@@ -104,12 +111,14 @@ const UsersPage: React.FC = () => {
               <td>{new Date(user.createdAt).toLocaleDateString()}</td>
               <td>{user.role.name}</td>
               <td>
-                <button
-                  onClick={() => handleDelete(user.id)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  Delete
-                </button>
+                {user.role.name !== "admin" && (
+                  <button
+                    onClick={() => handleDelete(user.id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    Delete
+                  </button>
+                )}
                 <Link href={`/admin/users/edit/${user.id}`}>
                   <button className="text-blue-500 hover:text-blue-700 ml-3">
                     Edit
