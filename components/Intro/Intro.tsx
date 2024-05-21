@@ -3,7 +3,9 @@ import { SiHotelsdotcom } from "react-icons/si";
 
 const Intro = () => (
   <div className="">
-    <h1 className="mt-6 text-cyan-900"> Introduce</h1>
+    <h1 id="Intro" className="mt-6 text-cyan-900">
+      <a href="#Intro">Introduce</a>
+    </h1>
     <div className="flex gap-x-4 mt-6 items-center text-black">
       <div className={`cursor-pointer text-3xl`}>
         <SiHotelsdotcom />

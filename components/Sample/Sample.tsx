@@ -19,7 +19,9 @@ const Sample = () => {
   return (
     <>
       <div className="">
-        <h1 className=" text-cyan-900">Explore the spaces here</h1>
+        <h1 id="explore" className=" text-cyan-900">
+          <a href="#explore">Explore the spaces here</a>
+        </h1>
       </div>
       <h3 className="border-b border-primary mt-6 mb-6 pb-4">
         Room Models in HNP
@@ -140,9 +142,14 @@ const Sample = () => {
         </div>
       )}
       <div className="flex justify-center">
-        <button className="btn hover:scale-125 transition ease-out duration-500  ">
-          Load more
-        </button>
+        <a href="#loadmore">
+          <button
+            id="loadmore"
+            className="btn hover:scale-125 transition ease-out duration-500  "
+          >
+            Load more
+          </button>
+        </a>
       </div>
     </>
   );

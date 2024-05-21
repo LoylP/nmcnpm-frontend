@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { getCookie } from "cookies-next"; // Import getCookie
 import {
   BiSolidObjectsHorizontalLeft,
   BiSolidChevronsLeft,
@@ -10,6 +11,7 @@ import {
   BiMessage,
   BiListCheck,
   BiDownload,
+  BiHome,
   BiBed,
 } from "react-icons/bi";
 import { SiHotelsdotcom } from "react-icons/si";
@@ -23,31 +25,48 @@ interface MenuItem {
 
 const Menu = () => {
   const [open, setOpen] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
+  const [isLog, setIsLog] = useState<boolean>(false);
   const defaultIconSize = "2rem";
   const pathname = usePathname();
+
+  useEffect(() => {
+    const token = getCookie("access_token");
+    const user = getCookie("userName"); // Assuming the username is stored in a cookie named "userName"
+    console.log(user);
+    if (user) {
+      setUsername(user as string);
+      setIsLog(true);
+    }
+  }, []);
 
   const Menus: { title: string; list: MenuItem[] }[] = [
     {
       title: "Pages",
       list: [
         {
-          title: "Introduce",
+          title: "Home",
           path: "/",
+          icon: <BiHome size={defaultIconSize} />,
+        },
+        {
+          title: "Introduce",
+          path: "#Intro",
           icon: <BiSolidObjectsHorizontalLeft size={defaultIconSize} />,
         },
         {
           title: "Explore ",
-          path: "/explore",
+          path: "#explore",
           icon: <BiListCheck size={defaultIconSize} />,
         },
         {
           title: "Load More",
-          path: "/loadmore",
+          path: "#loadmore",
           icon: <BiDownload size={defaultIconSize} />,
         },
         {
-          title: "Account",
-          path: "/account",
+          title: isLog ? (username as string) : "Account",
+          path: "/profile",
           icon: <BiSolidUserCircle size={defaultIconSize} />,
         },
       ],
@@ -55,11 +74,6 @@ const Menu = () => {
     {
       title: "Function",
       list: [
-        {
-          title: "Inbox",
-          path: "/inbox",
-          icon: <BiMessage size={defaultIconSize} />,
-        },
         {
           title: "Setting",
           path: "/setting",
@@ -89,7 +103,7 @@ const Menu = () => {
         <BiSolidChevronsLeft />
       </div>
 
-      <div className="flex mt-3 items-center fixed text-yellow-400">
+      <div className="flex mt-1 items-center fixed text-yellow-400">
         <div
           className={`cursor-pointer duration-500 text-4xl ${
             open && "rotate-[360deg] "
