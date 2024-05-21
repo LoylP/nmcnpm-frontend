@@ -16,17 +16,17 @@ const Header = ({
   isUser: boolean;
 }) => {
   const [username, setUsername] = useState<string | null>(null);
-
+  const [isLog, setIsLog] = useState<boolean>(false);
   useEffect(() => {
     const token = getCookie("access_token");
     const user = getCookie("userName"); // Assuming the username is stored in a cookie named "userName"
-    if (token && user) {
+    console.log(user);
+    if (user) {
       setUsername(user as string);
+      setIsLog(true);
     }
   }, []);
 
-  const isLoggedIn = username !== null;
-  console.log("check: ", isLoggedIn);
   return (
     <nav className="w-full h-20 lg:h-20 text-black bg-slate-950 lg:text-green-400">
       <div className="max-w-screen-2xl h-full mx-auto px-4 flex items-center">
@@ -49,7 +49,7 @@ const Header = ({
             </li>
           ))}
         </ul>
-        {isLoggedIn ? (
+        {isLog ? (
           <>
             <div className="hidden lg:inline-flex gap-8 items-center text-black ml-auto">
               <BsSearch className="text-xl hover:text-hoverColor text-white" />

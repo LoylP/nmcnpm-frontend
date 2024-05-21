@@ -119,11 +119,11 @@ const UsersPage: React.FC = () => {
                     Delete
                   </button>
                 )}
-                <Link href={`/admin/users/edit/${user.id}`}>
+                {/* <Link href={`/admin/users/edit/${user.id}`}>
                   <button className="text-blue-500 hover:text-blue-700 ml-3">
                     Edit
                   </button>
-                </Link>
+                </Link> */}
               </td>
             </tr>
           ))}
