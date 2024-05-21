@@ -7,6 +7,7 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { SiHotelsdotcom } from "react-icons/si";
 import { GrUserAdmin } from "react-icons/gr";
 import { getCookie } from "cookies-next";
+import Link from "next/link";
 
 const Header = ({
   services,
@@ -53,7 +54,10 @@ const Header = ({
           <>
             <div className="hidden lg:inline-flex gap-8 items-center text-black ml-auto">
               <BsSearch className="text-xl hover:text-hoverColor text-white" />
-              <div className="text-white font-semibold">{username}</div>
+              <Link href="../profile">
+                {" "}
+                <div className="text-white font-semibold">{username}</div>
+              </Link>
             </div>
             <div className="inline-flex lg:hidden">
               <FiMenu className="text-3xl text-white" />
