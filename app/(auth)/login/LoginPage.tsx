@@ -31,20 +31,20 @@ const LoginPage = () => {
 
       console.log(data);
       setCookie("access_token", data.access_token, {
-        maxAge: 900,
+        maxAge: 600,
       });
       setCookie("role_id", data.role_id, {
-        maxAge: 900,
+        maxAge: 600,
       });
       setCookie("userName", userName, {
-        maxAge: 900,
+        maxAge: 600,
       });
 
-      // if (data.role_id === 1) {
-      //   router.push("/admin");
-      // } else {
-      //   router.push("/");
-      // }
+      if (data.role_id === 1) {
+        router.push("/admin");
+      } else {
+        router.push("/");
+      }
       // Redirect hoặc điều hướng người dùng đến trang khác
       // Ví dụ: router.push("/dashboard");
     } catch (error) {

@@ -118,3 +118,34 @@ export async function PATCH(route: string, body: any) {
     throw new Error("Error fetching data");
   }
 }
+
+export async function POST_UPLOAD(route: string, body: FormData, options = {}) {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_HOST}:${process.env.NEXT_PUBLIC_BACKEND_PORT}/${route}`,
+      {
+        method: "POST",
+        body: body,
+        credentials: "include",
+        headers: {
+          // Do not manually set Content-Type, let the browser set it automatically
+          "Access-Control-Allow-Origin": "http://localhost:5050",
+          "Access-Control-Allow-Methods": "POST",
+          "Access-Control-Allow-Headers": "Content-Type",
+        },
+        ...options,
+      }
+    );
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("Error response from server:", errorText);
+      throw new Error("Failed to upload file");
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    throw new Error("Error uploading file");
+  }
+}
