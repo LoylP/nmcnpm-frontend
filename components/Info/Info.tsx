@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import { GET, PATCH } from "@/app/utils";
 
 interface User {
@@ -17,13 +16,24 @@ interface User {
 const Info = () => {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [avatar, setAvatar] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const avatarPath = await GET("v1/user/user_avatar");
+        if (avatarPath) {
+          const splitStr = avatarPath.result.split("/");
+          if (splitStr[0] === "images") {
+            avatarPath.result = avatarPath.result.replace("images", "static");
+          }   
+          setAvatar(`${process.env.NEXT_PUBLIC_IMAGES_FOLDER}${avatarPath.result}`);
+        } else {
+          setError("Failed to set avatar");
+        }
         const res = await GET("v1/user");
         //@ts-ignore
-        const data = await res.json();
+        const data = res;
         if (data && data.data && data.data.length > 0) {
           setUser(data.data[0]);
         }
@@ -35,9 +45,7 @@ const Info = () => {
     fetchData();
   }, []);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     if (user) {
       setUser({ ...user, [e.target.name]: e.target.value });
     }
@@ -47,8 +55,12 @@ const Info = () => {
     e.preventDefault();
     if (user) {
       try {
+        if (typeof(user.gender) === "string") {
+          user.gender = parseInt(user.gender);
+        }
         const res = await PATCH("v1/user", user);
         const data = await res.json();
+        console.log(user);
         console.log(data);
         if (data.status === 200) {
           setError(null);
@@ -70,7 +82,11 @@ const Info = () => {
     <form onSubmit={handleSubmit} className="flex mt-4 gap-4 p-2 bg-slate-700">
       <div className="p-4 rounded-xl font-bold h-1/2 bg-slate-500 text-white">
         <div className="w-60 h-60 relative rounded-md overflow-hidden mb-4">
-          <Image src="/avt_admin.webp" alt="User Avatar" layout="fill" />
+          {avatar ? (
+            <img src={avatar} alt="User Avatar" className="rounded-full"/>
+          ) : (
+            <p>Loading avatar...</p>
+          )}
         </div>
         {user.userName}
       </div>

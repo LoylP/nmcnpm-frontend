@@ -17,8 +17,8 @@ const Page = () => {
   return (
     <div className="flex ">
       <Menu />
-      <main className="flex-1 md:col-span-4 bg-blue-50">
-        <div className="w-full bg-banner-bg bg-center ">
+      <main className="flex-1 md:col-span-4 bg-slate-700">
+        <div className="w-full ">
           <div className="w-full bg-black opacity-60 text-white">
             <Header services={services} isUser={true} />
           </div>
