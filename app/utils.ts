@@ -45,7 +45,7 @@ export async function GET(route: string) {
         },
       }
     );
-    return res;
+    return await res.json();
   } catch (error) {
     console.error("Error fetching data:", error);
     return {
@@ -86,5 +86,35 @@ export async function DELETE(request: any, route: string) {
         "Content-Type": "application/json",
       },
     });
+  }
+}
+
+export async function PATCH(route: string, body: any) {
+  try {
+    console.log("Sending PATCH request to:", `${process.env.NEXT_PUBLIC_BACKEND_HOST}:${process.env.NEXT_PUBLIC_BACKEND_PORT}/${route}`);
+    console.log("Request body:", body);
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_HOST}:${process.env.NEXT_PUBLIC_BACKEND_PORT}/${route}`,
+      {
+        method: "PATCH",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      }
+    );
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("Error response from server:", errorText);
+      throw new Error("Failed to update user");
+    }
+
+    return res;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw new Error("Error fetching data");
   }
 }

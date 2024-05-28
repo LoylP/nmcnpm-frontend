@@ -31,13 +31,13 @@ const LoginPage = () => {
 
       console.log(data);
       setCookie("access_token", data.access_token, {
-        maxAge: 600,
+        maxAge: 900,
       });
       setCookie("role_id", data.role_id, {
-        maxAge: 600,
+        maxAge: 900,
       });
       setCookie("userName", userName, {
-        maxAge: 600,
+        maxAge: 900,
       });
 
       if (data.role_id === 1) {
