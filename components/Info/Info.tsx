@@ -124,7 +124,7 @@ const Info = () => {
             <p>Loading avatar...</p>
           )}
         </div>
-        {user.userName}
+        {/* {user.userName} */}
         <div className="flex-col">
         <input type="file" accept="image/*" onChange={handleFileChange} className="mt-4" />
         {preview && (
