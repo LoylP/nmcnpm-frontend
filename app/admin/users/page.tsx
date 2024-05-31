@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { Suspense, useEffect, useState } from "react";
 import { GET, DELETE } from "@/app/utils";
+import Add from "@/components/Dashboard/add/add";
 
 // Define the User type
 interface role {
@@ -35,8 +36,7 @@ const UsersPage: React.FC = () => {
       try {
         const res = await GET("v1/admin/user");
         // @ts-ignore
-        const data = await res.json();
-        setUsers(data.data);
+        setUsers(res.data);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -78,9 +78,10 @@ const UsersPage: React.FC = () => {
           </button>
         </Link>
       </div>
-      <table className="w-full mt-5">
+      <table className="w-full mt-5 divide-y">
         <thead>
-          <tr>
+          <tr className="my-10 text-green-400">
+            <th>Index</th>
             <th>UserName</th>
             <th>FullName</th>
             <th>Email</th>
@@ -91,34 +92,41 @@ const UsersPage: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
+          {users.map((user, ind) => (
             <tr key={user.id}>
               <td>
-                <div className="flex mt-2 item-center gap-5">
-                  <Image
-                    src="/avt_admin.webp"
-                    alt="User Avatar"
-                    width={40}
-                    height={40}
-                    className="rounded-full object-cover"
-                  />
-                  {user.userName}
-                </div>
+                <Add content={ind}/>
               </td>
-              <td>{user.fullName}</td>
-              <td>{user.email || "N/A"}</td>
-              <td>{user.phone}</td>
-              <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-              <td>{user.role.name}</td>
               <td>
-                {user.role.name !== "admin" && (
-                  <button
-                    onClick={() => handleDelete(user.id)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    Delete
-                  </button>
-                )}
+                <Add content={user.userName}/>
+              </td>
+              <td>
+                <Add content={user.fullName}/>
+              </td>
+              <td>
+                <Add content={user.email}/>
+              </td>
+              <td>
+                <Add content={user.phone}/>
+              </td>
+              <td>
+                <Add content={new Date(user.createdAt).toLocaleDateString()}/>
+              </td>
+              <td>
+                <Add content={user.role.name}/>
+              </td>
+              <td>
+                <div className="flex mt-2 justify-center item-center gap-5">
+                  {user.role.name !== "admin" && (
+                    <button
+                      onClick={() => handleDelete(user.id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
+                
                 {/* <Link href={`/admin/users/edit/${user.id}`}>
                   <button className="text-blue-500 hover:text-blue-700 ml-3">
                     Edit

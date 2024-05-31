@@ -1,6 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { GET, PATCH, POST_UPLOAD } from "@/app/utils";
+import { GET, PATCH, POST_UPLOAD, GET_ALL_COUNTRY } from "@/app/utils";
+import Button from '@mui/material/Button';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { styled } from '@mui/material/styles';
+import { Router } from "next/router";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface User {
   id: number;
@@ -13,17 +19,48 @@ interface User {
   gender: number;
 }
 
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
+
 const Info = () => {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [avatar, setAvatar] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
+  const [countries, setCountries] = useState<string[]>([]);
+  const [city, setCity] = useState<string[]>([]);
+  const router = useRouter();
+  const [countryResponse, setCountryResponse] = useState<any>(null);
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const res = await GET("v1/user");
+        const data = res;
+        if (data && data.data && data.data.length > 0) {
+          setUser(data.data[0]);
+        }
         const avatarPath = await GET("v1/user/user_avatar");
+        const all_countries = await GET_ALL_COUNTRY();
+        if (all_countries){
+          setCountryResponse(all_countries);
+        }
+        if (all_countries) {
+          setCountries(Array.from(all_countries.keys()));
+          // setCity(countryResponse.get(user?.country))
+          setCity(all_countries.get(data.data[0].country));
+        } else {
+          setError("Failed to fetch countries");
+        }
         if (avatarPath) {
           const splitStr = avatarPath.result.split("/");
           if (splitStr[0] === "images") {
@@ -33,12 +70,8 @@ const Info = () => {
         } else {
           setError("Failed to set avatar");
         }
-        const res = await GET("v1/user");
-        //@ts-ignore
-        const data = res;
-        if (data && data.data && data.data.length > 0) {
-          setUser(data.data[0]);
-        }
+        
+        
       } catch (error) {
         console.error("Error fetching user:", error);
       }
@@ -53,6 +86,19 @@ const Info = () => {
     }
   };
 
+  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedCountry = e.target.value;
+    setUser(prevUser => prevUser ? { ...prevUser, country: selectedCountry, city: '' } : null);
+    setCity(countryResponse.get(selectedCountry) || []);
+  };
+
+  const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedCity = e.target.value;
+    setUser(prevUser => prevUser ? { ...prevUser, city: selectedCity } : null);
+  };
+  
+  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (user) {
@@ -62,8 +108,6 @@ const Info = () => {
         }
         const res = await PATCH("v1/user", user);
         const data = await res.json();
-        console.log(user);
-        console.log(data);
         if (data.status === 200) {
           setError(null);
         } else {
@@ -79,8 +123,8 @@ const Info = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
     if (file) {
-      setSelectedFile(file);
       const previewUrl = URL.createObjectURL(file);
+      setSelectedFile(file);
       setPreview(previewUrl);
     }
   };
@@ -92,17 +136,14 @@ const Info = () => {
       try {
         const res = await POST_UPLOAD("v1/user/user_avatar/upload", formData);
         const data = res;
-        if (res.ok) {
+        if (res.error == 0) {
+          location.reload()
           setAvatar(`${process.env.NEXT_PUBLIC_IMAGES_FOLDER}${data.result}`);
           setPreview(null);
           setSelectedFile(null);
-      //     setTimeout(function(){// wait for 2.5 
-      //       location.reload();
-      //  }, 2500); 
         } else {
           setError(data.message || "Failed to upload avatar");
         }
-      
       } catch (error) {
         console.error("Error uploading avatar:", error);
         setError("Failed to upload avatar");
@@ -115,26 +156,36 @@ const Info = () => {
   }
 
   return (
+
     <form onSubmit={handleSubmit} className="flex mt-4 gap-4 p-2 bg-slate-700">
       <div className="p-4 rounded-xl font-bold h-1/2 bg-slate-500 text-white">
-        <div className="w-60 h-60 relative rounded-md overflow-hidden mb-4">
+        <div className="w-72 h-72 relative rounded-md overflow-hidden mb-4">
           {avatar ? (
-            <img src={avatar} alt="User Avatar" className="rounded-full"/>
+            <Image loader={() => avatar} alt="User Avatar" className="rounded-full" src={avatar} width={280} height={340}/>
           ) : (
             <p>Loading avatar...</p>
           )}
         </div>
-        {/* {user.userName} */}
         <div className="flex-col">
-        <input type="file" accept="image/*" onChange={handleFileChange} className="mt-4" />
-        {preview && (
-          <div className="mt-4">
-            <img src={preview} alt="Preview" className="w-20 h-20 rounded-full" />
-            <button type="button" onClick={handleUpload} className="mt-2 p-2 bg-slate-600 text-white rounded-md hover:bg-sky-700">
-              Upload
-            </button>
-          </div>
-        )}</div>
+          <Button
+            component="label"
+            role={undefined}
+            variant="contained"
+            tabIndex={-1}
+            startIcon={<CloudUploadIcon />}
+          >
+            Upload file
+            <VisuallyHiddenInput type="file" onChange={handleFileChange} />
+          </Button>
+          {preview && (
+            <div className="mt-4">
+              <img src={preview} alt="Preview" className="w-20 h-20 rounded-full" />
+              <button type="button" onClick={handleUpload} className="mt-2 p-2 bg-slate-600 text-white rounded-md hover:bg-sky-700">
+                Upload
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       
       <div className="flex-auto bg-slate-500 p-4 rounded-xl text-slate-950">
@@ -185,23 +236,33 @@ const Info = () => {
         <div className="flex gap-10 mb-10">
           <div className="flex flex-col w-1/2">
             <label className="text-2xl">City</label>
-            <input
+            <select
               className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
-              type="text"
               name="city"
               value={user.city}
-              onChange={handleChange}
-            />
+              onChange={handleCityChange}
+            >
+              {city.map(country => (
+                <option key={country} value={country}>
+                  {country}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="flex flex-col w-1/2">
             <label className="text-2xl">Country</label>
-            <input
+            <select
               className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
-              type="text"
               name="country"
               value={user.country}
-              onChange={handleChange}
-            />
+              onChange={handleCountryChange}
+            >
+              {countries.map(country => (
+                <option key={country} value={country}>
+                  {country}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
         <div className="flex gap-10 mb-10">

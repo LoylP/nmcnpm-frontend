@@ -150,3 +150,17 @@ export async function POST_UPLOAD(route: string, body: FormData, options = {}) {
     throw new Error("Error uploading file");
   }
 }
+
+export async function GET_ALL_COUNTRY() {
+  const res = await fetch(
+    `https://countriesnow.space/api/v0.1/countries`,
+  )
+  const data = await res.json()
+  const dataList = data.data;
+  const countries = new Map();
+  for (let key in dataList){
+    countries.set(dataList[key]["country"], dataList[key]["cities"])
+  }
+  return countries
+}
+  

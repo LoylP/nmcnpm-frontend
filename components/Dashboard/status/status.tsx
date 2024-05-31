@@ -29,8 +29,7 @@ const Status: React.FC = () => {
       try {
         const res = await GET("v1/admin/user");
         // @ts-ignore
-        const data = await res.json();
-        const adminUsersData = data.data.filter(
+        const adminUsersData = res.data.filter(
           (user: User) => user.role.name === "admin"
         );
         setAdminUsers(adminUsersData);

@@ -26,7 +26,6 @@ export default function AdminLayout({
           <div className={styles.content}>
             <Navbar />
             {children}
-            <Footer />
           </div>
         </div>
       </body>
