@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { GET } from "@/app/utils";
+import Link from "next/link";
 
 const Page = () => {
   const [avatar, setAvatar] = useState<string | null>(null);
@@ -34,14 +35,16 @@ const Page = () => {
     <div className="flex bg-slate-800 mt-10 gap-1">
       <div className="flex flex-col gap-5">
         <div className="flex gap-5 justify-between">
-          <h1>Hello</h1>
-        </div>
-        {error && <p className="text-red-500">{error}</p>}
-        {avatar ? (
-          <img src={avatar} alt="User Avatar" className="rounded-full" />
-        ) : (
-          <p>Loading...</p>
-        )}
+          <Link href={"/admin/services"}>
+            <button className="bg-slate-400 w-30 h-20 p-2 rounded-2xl hover:bg-green-400">Add Service</button>
+          </Link>
+          <Link href={"/admin/roomtype"}>
+            <button className="bg-slate-400 w-30 h-20 p-2 rounded-2xl hover:bg-green-400">Add RoomType</button>
+          </Link>
+          <Link href={"/admin/room"}>
+            <button className="bg-slate-400 w-30 h-20 p-2 rounded-2xl hover:bg-green-400">Add Room</button>
+          </Link>
+        </div>    
       </div>
     </div>
   );

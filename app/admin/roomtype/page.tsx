@@ -108,7 +108,7 @@ const Page = () => {
     const handleDelete = async (roomtypeId: number) => {
         try {
           const confirmDelete = window.confirm(
-            "Are you sure you want to delete this user?"
+            "Are you sure you want to delete this roomtype?"
           );
           if (!confirmDelete) return;
     
@@ -184,7 +184,7 @@ const Page = () => {
                             </div>
                             <div className="w-3/5">
                                 <label htmlFor="services" className="block text-sm font-medium text-green-400">Services</label>
-                                <div className=" mt-1 p-2 w-full border rounded-md bg-gray-500 grid grid-cols-2 gap-4">
+                                <div className="h-3/5 overflow-y-auto mt-1 p-2 w-full border rounded-md bg-gray-500 grid grid-cols-2 gap-4">
                                     {services.map(service => (
                                         <div key={service.id} className="flex items-center">
                                             <input
