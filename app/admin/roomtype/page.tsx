@@ -1,16 +1,18 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { GET, POST, DELETE } from "@/app/utils";
+import { Button, Modal, message, Space } from 'antd';
 
 interface Service {
     id: number;
     name: string;
-    price: number;
+    quantity: number;
 }
 
 interface RoomService {
     id: number;
     service: Service;
+    quantity: number;
 }
 
 interface RoomType {
@@ -34,11 +36,28 @@ const Page = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
     const [services, setServices] = useState<Service[]>([]);
+    const [selectedRoomType, setSelectedRoomType] = useState<RoomType | null>(null);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const showModal = (roomType: RoomType) => {
+        setSelectedRoomType(roomType);
+        setIsModalOpen(true);
+    };
+
+    const handleOk = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
 
     useEffect(() => {
         const fetchRoomTypes = async () => {
             try {
                 const res = await GET("v1/room_type");
+                console.log(res.data)
                 setRoomTypes(res.data);
             } catch (error) {
                 console.error("Error fetching room types:", error);
@@ -81,6 +100,7 @@ const Page = () => {
             const data = await res.json();
 
             console.log(data); // Ensure console.log works
+            location.reload()
 
             // Redirect or navigate user to another page
             // For example: router.push("/dashboard");
@@ -125,7 +145,6 @@ const Page = () => {
           console.error("Error deleting roomtype:", error);
         }
       };
-    
 
     return (
         <div className="flex flex-col items-center mt-5">
@@ -135,18 +154,15 @@ const Page = () => {
                     <form onSubmit={handleSubmit}>
                         <div className="flex space-x-4">
                             <div className="w-1/3">
-                                <label htmlFor="name" className="block text-sm font-medium text-green-400">Select Type</label>
-                                <select
+                                <label htmlFor="name" className="block text-sm font-medium text-green-400">RoomType Name</label>
+                                <input
+                                    type="text"
+                                    id="name"
                                     className="mt-1 p-2 w-full border rounded-md bg-slate-200"
-                                    name="name"
+                                    placeholder="Name RoomType..."
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                >
-                                    <option value="">Select...</option>
-                                    <option value="Standard">Standard</option>
-                                    <option value="Superior">Superior</option>
-                                    <option value="Luxury">Luxury</option>
-                                </select>
+                                />
                             </div>
                             <div className="w-1/3">
                                 <label htmlFor="capacity" className="block text-sm font-medium text-green-400">Capacity</label>
@@ -244,13 +260,13 @@ const Page = () => {
                                 <th className="py-2">Capacity</th>
                                 <th className="py-2">CreatedAt</th>
                                 <th className="py-2">UpdatedAt</th>
-                                <th className="py-2">Delete?</th>
+                                <th className="py-2">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {roomTypes.map((roomType, idx) => (
                                 <tr key={roomType.id}>
-                                    <td className="py-2 text-center">{idx}</td>
+                                    <td className="py-2 text-center">{idx + 1}</td>
                                     <td className="py-2 text-center">{roomType.name}</td>
                                     <td className="py-2 text-center">{roomType.capacity}</td>
                                     <td className="py-2 text-center">{new Date(roomType.createdAt).toLocaleDateString()}</td>
@@ -260,8 +276,37 @@ const Page = () => {
                                             <button
                                                 onClick={() => handleDelete(roomType.id)}
                                                 className="text-red-500 hover:text-red-700"
-                                                >Delete
+                                            >
+                                                Delete
                                             </button>
+                                            <Button type="primary" onClick={() => showModal(roomType)}>
+                                                Update
+                                            </Button>
+                                            <Modal className="text-center" title="Room Type Details" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                                                {selectedRoomType && (
+                                                    <div className="my-2 text-left">                                               
+                                                        <p><b className="text-sky-700">Name:</b> {selectedRoomType.name}</p>
+                                                        <p><b className="text-sky-700">Capacity:</b> {selectedRoomType.capacity}</p>
+                                                        <p><b className="text-sky-700">Description:</b> {selectedRoomType.desc}</p>
+                                                        <p><b className="text-sky-700">Price Base:</b> {selectedRoomType.priceBase}</p>
+                                                        <p><b className="text-sky-700">Created At:</b> {new Date(selectedRoomType.createdAt).toLocaleDateString()}</p>
+                                                        <p><b className="text-sky-700">Updated At:</b> {new Date(selectedRoomType.updatedAt).toLocaleDateString()}</p>
+                                                        <p><b className="text-sky-700">Services:</b></p>
+                                                        <ul>
+                                                            {selectedRoomType.roomService.map((rs) => (
+                                                                
+                                                                <li key={rs.id}>
+                                                     
+                                                                    <p className="mx-4" key={rs.service.id}>{rs.service.name} - {rs.quantity}</p>
+                                                                    {/* {rs.service.map((ser) => (
+                                                                        <p key={ser.id}>{ser.name} (Quantity: {ser.quantity})</p>
+                                                                    ))} */}
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                )}
+                                            </Modal>
                                         </div>
                                     </td>
                                 </tr>

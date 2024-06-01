@@ -1,7 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { GET, POST, DELETE_Ser } from "@/app/utils"
+import { GET, POST, DELETE_Ser, PATCH } from "@/app/utils"
 import Add from "@/components/Dashboard/add/add";
+import { Button, Modal, message, Space } from 'antd';
 
 interface Service {
     id: number;
@@ -16,6 +17,47 @@ const Page = () => {
     const [price, setPrice] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [services, setService] = useState<Service[]>([]);
+
+    const [selectedServices, setSelectedServices] = useState<Service | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [messageApi, contextHolder] = message.useMessage();
+
+    const showModal = (service: Service) => {
+        setSelectedServices(service);
+        setIsModalOpen(true);
+    };
+
+    const handleOk = async () => {
+        try {
+            const body = {
+                serviceId: selectedServices?.id,
+                name: selectedServices?.name,
+                //@ts-ignore
+                price: parseInt(selectedServices?.price),
+            }
+            
+            const res = await PATCH("v1/admin/service", body);
+            const data = await res.json();
+            messageApi.open({
+                type: 'success',
+                content: `Update Service with name=${body.name} success`,
+            });
+            setIsModalOpen(false);
+            setTimeout(() => {
+                location.reload()
+              }, 1500);
+        } catch (error) {
+            messageApi.open({
+                type: 'error',
+                content: `Error: Price must be a number`,
+              });
+        }
+        
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -45,6 +87,7 @@ const Page = () => {
           const data = await res.json();
     
           console.log(data); // Đảm bảo console.log hoạt động
+          location.reload()
     
           // Redirect hoặc điều hướng người dùng đến trang khác
           // Ví dụ: router.push("/dashboard");
@@ -74,6 +117,13 @@ const Page = () => {
           console.error("Error deleting service:", error);
         }
       };
+
+      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (selectedServices === null) return;
+
+        const { name, value } = e.target;
+        setSelectedServices((prevService) => prevService ? { ...prevService, [name]: value } : null);
+    };
 
     return (
         <div className="flex mt-auto">
@@ -143,12 +193,11 @@ const Page = () => {
             <th>Price</th>
             <th>CreatedAt</th>
             <th>UpdatedAt</th>
-            <th>Delete?</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {services.map((ser, idx) => (
-            
             <tr key={ser.id}>
                 <td>
                     <Add content={idx}/>
@@ -166,12 +215,36 @@ const Page = () => {
                     <Add content={new Date(ser.updatedAt).toLocaleDateString()}/>
                 </td>
                 <td>
+                    <div className="text-center mt-2">
+                    {contextHolder}
+                    <Button type="primary" onClick={() => showModal(ser)}>
+                        Update
+                    </Button>
+                    <Modal className="text-center" title="Room Type Details" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                        {selectedServices && (
+                            <div className="my-2 text-left">                                               
+                                <label className="text-2xl">Price</label>
+                                <input
+                                    className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
+                                    type="price"
+                                    name="price"
+                                    value={selectedServices.price}
+                                    onChange={handleChange}
+                            />
+                            </div>
+                            
+                        )}
+                    </Modal>
                     <button
                       onClick={() => handleDelete(ser.id)}
-                      className="text-red-500 hover:text-red-700"
+                      className="mx-2 text-red-500 hover:text-red-700"
                     >
                       Delete
                     </button>
+                    </div>
+                    
+                   
+                    
                   </td>
             </tr>
           ))}
