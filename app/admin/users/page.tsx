@@ -88,7 +88,7 @@ const UsersPage: React.FC = () => {
             <th>Phone</th>
             <th>CreatedAt</th>
             <th>Role</th>
-            <th>Actions</th>
+            <th>Delete?</th>
           </tr>
         </thead>
         <tbody>
@@ -126,12 +126,6 @@ const UsersPage: React.FC = () => {
                     </button>
                   )}
                 </div>
-                
-                {/* <Link href={`/admin/users/edit/${user.id}`}>
-                  <button className="text-blue-500 hover:text-blue-700 ml-3">
-                    Edit
-                  </button>
-                </Link> */}
               </td>
             </tr>
           ))}

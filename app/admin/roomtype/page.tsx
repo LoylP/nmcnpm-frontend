@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { GET, POST } from "@/app/utils"
+import { GET, POST, DELETE } from "@/app/utils";
 
 interface Service {
     id: number;
@@ -105,165 +105,163 @@ const Page = () => {
         setSelectedServices(updatedServices);
     };
 
+    const handleDelete = async (roomtypeId: number) => {
+        try {
+          const confirmDelete = window.confirm(
+            "Are you sure you want to delete this user?"
+          );
+          if (!confirmDelete) return;
+    
+          const res = await DELETE(
+            {},
+            `v1/admin/room_type/${roomtypeId}`
+          );
+          if (res.ok) {
+            setRoomTypes(roomTypes.filter((room_type) => room_type.id !== roomtypeId));
+          } else {
+            console.error("Failed to delete roomtype:", await res.json());
+          }
+        } catch (error) {   
+          console.error("Error deleting roomtype:", error);
+        }
+      };
+    
+
     return (
-        <div className="flex">
-            <div className="w-1/3">
-                <div className="p-4 justify-items-center">
-                    <div className="justify-items-center bg-slate-500 px-3 py-3 rounded-lg shadow-lg mb-0 mx-auto text-black">
-                        {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
-                        <div>
-                            <form onSubmit={handleSubmit}>
-                                <div className="flex-col w-full justify-center">
-                                    <div className="mb-4 mx-auto">
-                                        <label
-                                            htmlFor="name"
-                                            className="block text-sm font-medium text-white"
-                                        >
-                                            RoomType
-                                        </label>
-                                        <select
-                                            className="mt-1 p-2 w-full border rounded-md bg-gray-300"
-                                            name="name"
-                                            value={name}
-                                            onChange={(e) => setName(e.target.value)}
-                                        >
-                                            <option value="...">...</option>
-                                            <option value="Standard">Standard</option>
-                                            <option value="Superior">Superior</option>
-                                            <option value="Luxury">Luxury</option>
-                                        </select>
-                                    </div>
-                                    <div className="mb-4 mx-auto">
-                                        <label
-                                            htmlFor="capacity"
-                                            className="block text-sm font-medium text-white"
-                                        >
-                                            Capacity
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="capacity"
-                                            className="mt-1 p-2 w-full border rounded-md bg-gray-300"
-                                            placeholder="Capacity..."
-                                            value={capacity}
-                                            onChange={(e) => setCapacity(e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="mb-4 mx-auto">
-                                        <label
-                                            htmlFor="desc"
-                                            className="block text-sm font-medium text-white"
-                                        >
-                                            Desc
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="desc"
-                                            className="mt-1 p-2 w-full border rounded-md bg-gray-300"
-                                            placeholder="Desc..."
-                                            value={desc}
-                                            onChange={(e) => setDesc(e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="mb-4 mx-auto">
-                                        <label
-                                            htmlFor="priceBase"
-                                            className="block text-sm font-medium text-white"
-                                        >
-                                            PriceBase
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="priceBase"
-                                            className="mt-1 p-2 w-full border rounded-md bg-gray-300"
-                                            placeholder="Price..."
-                                            value={priceBase}
-                                            onChange={(e) => setPriceBase(e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="mb-4 mx-auto">
-                                        <label
-                                            htmlFor="services"
-                                            className="block text-sm font-medium text-white"
-                                        >
-                                            Services
-                                        </label>
-                                        {services.map(service => (
-                                            <div key={service.id} className="flex items-center mt-2">
-                                                <input
-                                                    type="checkbox"
-                                                    id={`service-${service.id}`}
-                                                    value={service.id}
-                                                    checked={selectedServices.some(s => s.id === service.id)}
-                                                    onChange={() => handleServiceChange(service.id, service.name)}
-                                                    className="mr-2"
-                                                />
-                                                <label htmlFor={`service-${service.id}`} className="text-white">{service.name}</label>
-                                                {selectedServices.some(s => s.id === service.id) && (
-                                                    <input
-                                                        type="number"
-                                                        min="1"
-                                                        value={selectedServices.find(s => s.id === service.id)?.quantity || 1}
-                                                        onChange={(e) => handleQuantityChange(service.id, parseInt(e.target.value))}
-                                                        className="ml-2 p-1 w-16 border rounded-md bg-gray-300"
-                                                    />
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div className="w-full justify-center mb-4 p-4 mx-auto">
-                                    <button
-                                        type="submit"
-                                        className="w-full p-2 bg-sky-800 text-white rounded-md hover:bg-slate-700"
-                                    >
-                                        Add RoomType
-                                    </button>
-                                </div>
-                            </form>
+        <div className="flex flex-col items-center mt-5">
+            <div className="w-full max-w-4xl">
+                <div className="p-4 bg-slate-700 rounded-lg shadow-lg text-black">
+                    {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
+                    <form onSubmit={handleSubmit}>
+                        <div className="flex space-x-4">
+                            <div className="w-1/3">
+                                <label htmlFor="name" className="block text-sm font-medium text-green-400">Select Type</label>
+                                <select
+                                    className="mt-1 p-2 w-full border rounded-md bg-slate-200"
+                                    name="name"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                >
+                                    <option value="">Select...</option>
+                                    <option value="Standard">Standard</option>
+                                    <option value="Superior">Superior</option>
+                                    <option value="Luxury">Luxury</option>
+                                </select>
+                            </div>
+                            <div className="w-1/3">
+                                <label htmlFor="capacity" className="block text-sm font-medium text-green-400">Capacity</label>
+                                <input
+                                    type="text"
+                                    id="capacity"
+                                    className="mt-1 p-2 w-full border rounded-md bg-slate-200"
+                                    placeholder="Capacity..."
+                                    value={capacity}
+                                    onChange={(e) => setCapacity(e.target.value)}
+                                />
+                            </div>
+                            <div className="w-1/3">
+                                <label htmlFor="priceBase" className="block text-sm font-medium text-green-400">Price Base</label>
+                                <input
+                                    type="text"
+                                    id="priceBase"
+                                    className="mt-1 p-2 w-full border rounded-md bg-slate-200"
+                                    placeholder="Price..."
+                                    value={priceBase}
+                                    onChange={(e) => setPriceBase(e.target.value)}
+                                />
+                            </div>
                         </div>
-                    </div>
+                        <div className="flex my-4 space-x-5">
+                            <div className="w-2/5">
+                                <label htmlFor="desc" className="block text-sm font-medium text-green-400">Description</label>
+                                <textarea
+                                    id="desc"
+                                    className="mt-1 p-2 w-full h-5/6 border rounded-md bg-gray-200"
+                                    placeholder="Description..."
+                                    value={desc}
+                                    onChange={(e) => setDesc(e.target.value)}
+                                />
+                            </div>
+                            <div className="w-3/5">
+                                <label htmlFor="services" className="block text-sm font-medium text-green-400">Services</label>
+                                <div className=" mt-1 p-2 w-full border rounded-md bg-gray-500 grid grid-cols-2 gap-4">
+                                    {services.map(service => (
+                                        <div key={service.id} className="flex items-center">
+                                            <input
+                                                type="checkbox"
+                                                id={`service-${service.id}`}
+                                                value={service.id}
+                                                checked={selectedServices.some(s => s.id === service.id)}
+                                                onChange={() => handleServiceChange(service.id, service.name)}
+                                                className="mr-2"
+                                            />
+                                            <label htmlFor={`service-${service.id}`} className="text-white">{service.name}</label>
+                                            {selectedServices.some(s => s.id === service.id) && (
+                                                <input
+                                                    type="number"
+                                                    min="1"
+                                                    value={selectedServices.find(s => s.id === service.id)?.quantity || 1}
+                                                    onChange={(e) => handleQuantityChange(service.id, parseInt(e.target.value))}
+                                                    className="ml-2 p-1 w-16 border rounded-md bg-gray-300"
+                                                />
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                                <label htmlFor="services" className="mt-2 mb-1 block text-sm font-medium text-green-400">Selected Services</label>
+                                <div className="p-2 w-full border rounded-md bg-gray-500 grid grid-cols-3">
+                                    {selectedServices.length > 0 ? (
+                                        selectedServices.map(service => (
+                                            <div key={service.id} className="flex items-center">
+                                                <span className="text-white">{service.name}:</span>
+                                                <span className="ml-2 text-white"> {service.quantity}</span>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="text-white">No services selected.</p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-4">
+                            <button
+                                type="submit"
+                                className="w-full p-2 bg-sky-800 text-white rounded-md hover:bg-slate-700"
+                            >
+                                Add RoomType
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
-            <div className="w-2/3">
-                <div className="bg-slate-800 p-5 rounded-lg mt-10">
-                    <div className="flex items-center justify-between"></div>
-                    <table className="w-full mt-5 divide-y">
+            <div className="w-full max-w-6xl mt-10">
+                <div className="bg-slate-800 p-5 rounded-lg">
+                    <table className="w-full divide-y divide-gray-700">
                         <thead>
                             <tr className="text-green-400">
-                                <th>Index</th>
-                                <th>Name_RoomType</th>
-                                <th>Capacity</th>
-                                <th>CreatedAt</th>
-                                <th>UpdatedAt</th>
+                                <th className="py-2">Index</th>
+                                <th className="py-2">Name_RoomType</th>
+                                <th className="py-2">Capacity</th>
+                                <th className="py-2">CreatedAt</th>
+                                <th className="py-2">UpdatedAt</th>
+                                <th className="py-2">Delete?</th>
                             </tr>
                         </thead>
                         <tbody>
                             {roomTypes.map((roomType, idx) => (
                                 <tr key={roomType.id}>
+                                    <td className="py-2 text-center">{idx}</td>
+                                    <td className="py-2 text-center">{roomType.name}</td>
+                                    <td className="py-2 text-center">{roomType.capacity}</td>
+                                    <td className="py-2 text-center">{new Date(roomType.createdAt).toLocaleDateString()}</td>
+                                    <td className="py-2 text-center">{new Date(roomType.updatedAt).toLocaleDateString()}</td>
                                     <td>
                                         <div className="flex mt-2 justify-center item-center gap-5">
-                                            {idx}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div className="flex mt-2 justify-center item-center gap-5">
-                                            {roomType.name}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div className="flex mt-2 justify-center item-center gap-5">
-                                            {roomType.capacity}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div className="flex mt-2 justify-center item-center gap-5">
-                                            {new Date(roomType.createdAt).toLocaleDateString()}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div className="flex mt-2 justify-center item-center gap-5">
-                                            {new Date(roomType.updatedAt).toLocaleDateString()}
+                                            <button
+                                                onClick={() => handleDelete(roomType.id)}
+                                                className="text-red-500 hover:text-red-700"
+                                                >Delete
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>

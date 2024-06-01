@@ -90,6 +90,32 @@ export async function DELETE(request: any, route: string) {
   }
 }
 
+export async function DELETE_Ser(request: any, route: string) {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_HOST}:${process.env.NEXT_PUBLIC_BACKEND_PORT}/${route}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(request),
+      }
+    );
+
+    return res;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return new Response(JSON.stringify({ message: "Error fetching data" }), {
+      status: 500,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+}
+
 export async function PATCH(route: string, body: any) {
   try {
     console.log("Sending PATCH request to:", `${process.env.NEXT_PUBLIC_BACKEND_HOST}:${process.env.NEXT_PUBLIC_BACKEND_PORT}/${route}`);
