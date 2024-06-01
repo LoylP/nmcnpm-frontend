@@ -22,6 +22,11 @@ const menuItems = [
         icon: <MdDashboard />,
       },
       {
+        title: "Home",
+        path: "/",
+        icon: <MdHome />,
+      },
+      {
         title: "Users",
         path: "/admin/users",
         icon: <MdSupervisedUserCircle />,
@@ -31,11 +36,7 @@ const menuItems = [
         path: "/admin/manage",
         icon: <GrUserAdmin />,
       },
-      {
-        title: "Home",
-        path: "/",
-        icon: <MdHome />,
-      },
+    
       {
         title: "History",
         path: "/admin/history",
