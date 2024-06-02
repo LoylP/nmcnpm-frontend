@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { GET, POST, DELETE } from "@/app/utils";
+import { GET, POST, DELETE, PATCH } from "@/app/utils";
 import { Button, Modal, message, Space } from 'antd';
 
 interface Service {
@@ -37,27 +37,64 @@ const Page = () => {
     const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
     const [services, setServices] = useState<Service[]>([]);
     const [selectedRoomType, setSelectedRoomType] = useState<RoomType | null>(null);
-
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+    const [messageApi, contextHolder] = message.useMessage();
 
     const showModal = (roomType: RoomType) => {
         setSelectedRoomType(roomType);
         setIsModalOpen(true);
     };
 
-    const handleOk = () => {
-        setIsModalOpen(false);
+    const showUpdateModal = (roomType: RoomType) => {
+        setSelectedRoomType(roomType);
+        setName(roomType.name);
+        setCapacity(roomType.capacity.toString());
+        setDesc(roomType.desc);
+        setPriceBase(roomType.priceBase.toString());
+        setSelectedServices(roomType.roomService.map(rs => ({ id: rs.service.id, name: rs.service.name, quantity: rs.quantity })));
+        setIsUpdateModalOpen(true);
+    };
+
+    const handleOk = async () => {
+        try {
+            const body = {
+                roomTypeId: selectedRoomType?.id,
+                name: name,
+                capacity: parseInt(capacity),
+                desc: desc,
+                priceBase: parseInt(priceBase),
+                service_names: selectedServices.map(service => service.name)
+            };
+
+            const res = await PATCH("v1/admin/room_type", body);
+            const data = await res.json();
+            messageApi.open({
+                type: 'success',
+                content: `Update RoomType with name=${body.name} success`,
+            });
+            setIsModalOpen(false);
+            setIsUpdateModalOpen(false);
+            setTimeout(() => {
+                location.reload()
+            }, 1500);
+        } catch (error) {
+            messageApi.open({
+                type: 'error',
+                content: `Error updating room type`,
+            });
+        }
     };
 
     const handleCancel = () => {
         setIsModalOpen(false);
+        setIsUpdateModalOpen(false);
     };
 
     useEffect(() => {
         const fetchRoomTypes = async () => {
             try {
                 const res = await GET("v1/room_type");
-                console.log(res.data)
                 setRoomTypes(res.data);
             } catch (error) {
                 console.error("Error fetching room types:", error);
@@ -98,12 +135,7 @@ const Page = () => {
             };
             const res = await POST({ body }, "v1/admin/room_type");
             const data = await res.json();
-
-            console.log(data); // Ensure console.log works
-            location.reload()
-
-            // Redirect or navigate user to another page
-            // For example: router.push("/dashboard");
+            location.reload();
         } catch (error) {
             console.error("Error registering:", error);
             setErrorMessage("Something went wrong. Please try again.");
@@ -127,24 +159,31 @@ const Page = () => {
 
     const handleDelete = async (roomtypeId: number) => {
         try {
-          const confirmDelete = window.confirm(
-            "Are you sure you want to delete this roomtype?"
-          );
-          if (!confirmDelete) return;
-    
-          const res = await DELETE(
-            {},
-            `v1/admin/room_type/${roomtypeId}`
-          );
-          if (res.ok) {
-            setRoomTypes(roomTypes.filter((room_type) => room_type.id !== roomtypeId));
-          } else {
-            console.error("Failed to delete roomtype:", await res.json());
-          }
-        } catch (error) {   
-          console.error("Error deleting roomtype:", error);
+            const confirmDelete = window.confirm(
+                "Are you sure you want to delete this roomtype?"
+            );
+            if (!confirmDelete) return;
+
+            const res = await DELETE(
+                {},
+                `v1/admin/room_type/${roomtypeId}`
+            );
+            if (res.ok) {
+                setRoomTypes(roomTypes.filter((room_type) => room_type.id !== roomtypeId));
+            } else {
+                console.error("Failed to delete roomtype:", await res.json());
+            }
+        } catch (error) {
+            console.error("Error deleting roomtype:", error);
         }
-      };
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (selectedRoomType === null) return;
+
+        const { name, value } = e.target;
+        setSelectedRoomType((prevRoomType) => prevRoomType ? { ...prevRoomType, [name]: value } : null);
+    };
 
     return (
         <div className="flex flex-col items-center mt-5">
@@ -225,16 +264,16 @@ const Page = () => {
                                     ))}
                                 </div>
                                 <label htmlFor="services" className="mt-2 mb-1 block text-sm font-medium text-green-400">Selected Services</label>
-                                <div className="p-2 w-full border rounded-md bg-gray-500 grid grid-cols-3">
+                                <div className="p-2 w-full border rounded-md bg-slate-300 grid grid-cols-3">
                                     {selectedServices.length > 0 ? (
                                         selectedServices.map(service => (
                                             <div key={service.id} className="flex items-center">
-                                                <span className="text-white">{service.name}:</span>
-                                                <span className="ml-2 text-white"> {service.quantity}</span>
+                                                <span className="text-gray-700">{service.name}:</span>
+                                                <span className="ml-2 text-gray-500"> {service.quantity}</span>
                                             </div>
                                         ))
                                     ) : (
-                                        <p className="text-white">No services selected.</p>
+                                        <p className="text-gray-500">No services selected.</p>
                                     )}
                                 </div>
                             </div>
@@ -258,8 +297,7 @@ const Page = () => {
                                 <th className="py-2">Index</th>
                                 <th className="py-2">Name_RoomType</th>
                                 <th className="py-2">Capacity</th>
-                                <th className="py-2">CreatedAt</th>
-                                <th className="py-2">UpdatedAt</th>
+                                <th className="py-2">Price</th>
                                 <th className="py-2">Action</th>
                             </tr>
                         </thead>
@@ -269,20 +307,14 @@ const Page = () => {
                                     <td className="py-2 text-center">{idx + 1}</td>
                                     <td className="py-2 text-center">{roomType.name}</td>
                                     <td className="py-2 text-center">{roomType.capacity}</td>
-                                    <td className="py-2 text-center">{new Date(roomType.createdAt).toLocaleDateString()}</td>
-                                    <td className="py-2 text-center">{new Date(roomType.updatedAt).toLocaleDateString()}</td>
+                                    <td className="py-2 text-center">{roomType.priceBase}</td>
                                     <td>
                                         <div className="flex mt-2 justify-center item-center gap-5">
-                                            <button
-                                                onClick={() => handleDelete(roomType.id)}
-                                                className="text-red-500 hover:text-red-700"
-                                            >
-                                                Delete
-                                            </button>
-                                            <Button type="primary" onClick={() => showModal(roomType)}>
-                                                Update
+                                            {contextHolder}
+                                            <Button className="bg-green-500" type="primary" onClick={() => showModal(roomType)}>
+                                                View
                                             </Button>
-                                            <Modal className="text-center" title="Room Type Details" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                                            <Modal className="text-center" title="Room Type Details" open={isModalOpen} onOk={handleCancel} onCancel={handleCancel}>
                                                 {selectedRoomType && (
                                                     <div className="my-2 text-left">                                               
                                                         <p><b className="text-sky-700">Name:</b> {selectedRoomType.name}</p>
@@ -294,19 +326,74 @@ const Page = () => {
                                                         <p><b className="text-sky-700">Services:</b></p>
                                                         <ul>
                                                             {selectedRoomType.roomService.map((rs) => (
-                                                                
                                                                 <li key={rs.id}>
-                                                     
                                                                     <p className="mx-4" key={rs.service.id}>{rs.service.name} - {rs.quantity}</p>
-                                                                    {/* {rs.service.map((ser) => (
-                                                                        <p key={ser.id}>{ser.name} (Quantity: {ser.quantity})</p>
-                                                                    ))} */}
                                                                 </li>
                                                             ))}
                                                         </ul>
                                                     </div>
                                                 )}
                                             </Modal>
+                                            <Button type="primary" onClick={() => showUpdateModal(roomType)}>
+                                                Update
+                                            </Button>
+                                            <Modal className="text-center" title="Update Room Type" open={isUpdateModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                                                {selectedRoomType && (
+                                                    <div className="my-2 text-left">
+                                                        <label className="text-xl block">Capacity</label>
+                                                        <input
+                                                            className="p-2 mb-2 rounded-md text-xl bg-slate-300 text-gray-700 w-full"
+                                                            type="number"
+                                                            value={selectedRoomType.capacity}
+                                                            onChange={handleChange}
+                                                        />
+                                                        <label className="text-xl block">Price Base</label>
+                                                        <input
+                                                            className="p-2 mb-2 rounded-md text-xl bg-slate-300 text-gray-700 w-full"
+                                                            type="number"
+                                                            value={selectedRoomType.priceBase}
+                                                            onChange={handleChange}
+                                                        />
+                                                        <label className="text-xl block">Description</label>
+                                                        <textarea
+                                                            className="p-2 mb-2 rounded-md text-xl bg-slate-300 text-gray-700 w-full"
+                                                            value={selectedRoomType.desc}
+                                                            onChange={(e) => setDesc(e.target.value)}
+                                                        />
+                                                        <label className="text-xl block">Services</label>
+                                                        <div className="h-32 overflow-y-auto mb-2 p-2 border rounded-md bg-gray-500 grid grid-cols-2 gap-4">
+                                                            {services.map(service => (
+                                                                <div key={service.id} className="flex items-center">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        id={`update-service-${service.id}`}
+                                                                        value={service.id}
+                                                                        checked={selectedServices.some(s => s.id === service.id)}
+                                                                        onChange={() => handleServiceChange(service.id, service.name)}
+                                                                        className="mr-2"
+                                                                    />
+                                                                    <label htmlFor={`update-service-${service.id}`} className="text-white">{service.name}</label>
+                                                                    {selectedServices.some(s => s.id === service.id) && (
+                                                                        <input
+                                                                            type="number"
+                                                                            min="1"
+                                                                            value={selectedServices.find(s => s.id === service.id)?.quantity || 1}
+                                                                            onChange={(e) => handleQuantityChange(service.id, parseInt(e.target.value))}
+                                                                            className="ml-2 p-1 w-16 border rounded-md bg-gray-300"
+                                                                        />
+                                                                    )}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </Modal>
+                                            <button
+                                                onClick={() => handleDelete(roomType.id)}
+                                                className="bg-red-500 rounded-md text-sm px-2 text-white hover:text-red-700"
+                                            >
+                                                Delete
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>

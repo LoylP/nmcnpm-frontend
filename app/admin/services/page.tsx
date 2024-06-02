@@ -242,9 +242,6 @@ const Page = () => {
                       Delete
                     </button>
                     </div>
-                    
-                   
-                    
                   </td>
             </tr>
           ))}
