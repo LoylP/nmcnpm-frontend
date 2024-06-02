@@ -226,7 +226,7 @@ const Page = () => {
                                 <label className="text-2xl">Price</label>
                                 <input
                                     className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
-                                    type="price"
+                                    type="number"
                                     name="price"
                                     value={selectedServices.price}
                                     onChange={handleChange}
