@@ -55,8 +55,8 @@ const Menu = () => {
           icon: <BiSolidObjectsHorizontalLeft size={defaultIconSize} />,
         },
         {
-          title: "Explore ",
-          path: "#explore",
+          title: "Booking ",
+          path: "/booking",
           icon: <BiListCheck size={defaultIconSize} />,
         },
         {

@@ -116,7 +116,7 @@ const Booking = () => {
       
       <div className="flex-auto bg-slate-500 p-4 rounded-xl text-slate-950">
         <div className="flex gap-10 mb-10">
-          <label className="text-2xl">Type</label>
+          <label className="text-2xl">Select TypeRoom</label>
           <select
             className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
             name="roomType"
