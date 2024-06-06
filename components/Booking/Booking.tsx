@@ -1,12 +1,18 @@
-"use client";
 import React, { useEffect, useState } from "react";
-import { GET, POST } from "@/app/utils";
+import { GET, POST, convertImagePath } from "@/app/utils";
 import { useRouter } from "next/navigation";
+import { Button, Modal } from 'antd';
 import Image from "next/image";
+
+interface Service {
+  id: number;
+  name: string;
+}
 
 interface RoomService {
   id: number;
   quantity: number;
+  service: Service;
 }
 
 interface RoomType {
@@ -19,19 +25,31 @@ interface RoomType {
   roomService: RoomService[];
 }
 
-
 const Booking = () => {
   const [roomType, setRoomType] = useState<RoomType[]>([]);
   const [selectedRoomType, setSelectedRoomType] = useState<RoomType | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [image, setImage] = useState<string | null>(null);
 
   const router = useRouter();
 
+  const showModal = (roomType: RoomType) => {
+    setSelectedRoomType(roomType);
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   const fetchRoomTypeImage = async (roomTypeId: number) => {
     try {
       const res = await POST({}, `v1/room_type/room_type_image/${roomTypeId}`);
-      console.log("res: ", res)
       const imagePath = await res.json();
       
       if (imagePath) {
@@ -53,12 +71,11 @@ const Booking = () => {
     const fetchData = async () => {
       try {
         const res = await GET("v1/room_type");
-        console.log("res: ", res)
         const data = await res.data;
         setRoomType(data);
 
         if (data.length > 0) {
-          const initialRoomTypeId = data[0].roomType.id;
+          const initialRoomTypeId = data[0].id; // Changed roomType.id to id
           fetchRoomTypeImage(initialRoomTypeId);
         }
       } catch (error) {
@@ -68,11 +85,11 @@ const Booking = () => {
     };
 
     fetchData();
+    
   }, []);
 
   const handleRoomTypeChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const roomTypeId = parseInt(e.target.value);
-    console.log(roomTypeId)
     const selectedRoomType = roomType.find(roomType => roomType.id === roomTypeId) || null;
     setSelectedRoomType(selectedRoomType);
 
@@ -81,66 +98,54 @@ const Booking = () => {
     }
   };
 
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (selectedRoomType) {
-      try {
-        const res = await POST("v1/room_detail/create", { roomTypeId: selectedRoomType.id });
-        const data = await res.json();
-        if (data.status === 200) {
-          setError(null);
-          alert("Booking successful");
-          router.push("/booking"); // Redirect to a success page or any other page
-        } else {
-          setError(data.message || "Failed to book room");
-        }
-      } catch (error) {
-        console.error("Error booking room:", error);
-        setError("Failed to book room");
-      }
-    }
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="flex mt-4 gap-4 p-2 bg-slate-700">
-      <div className="p-4 rounded-xl font-bold h-1/2 bg-slate-500 text-white">
-        <div className="w-72 h-72 relative rounded-md overflow-hidden mb-4">
-          {image ? (
-            <Image loader={() => image} alt="Room Type Image" className="rounded-md" src={image} width={280} height={340} />
-          ) : (
-            <p>Loading image...</p>
-          )}
+    <div className="gap-4 p-2 bg-slate-700">
+      <div className="grid grid-cols-4 gap-8">
+      {roomType.map((roomtype, index) => (
+        <div onClick={() => router.push(`/roomtype/${roomtype.id}`)} key={roomtype.id} className="p-4 rounded-xl font-bold h-full bg-slate-500 text-white hover:cursor-pointer transition-colors duration-200 hover:bg-cyan-800 ">
+          <div className="w-[90%] h-[90%] rounded-md overflow-hidden mb-4">
+            {roomtype.name}
+            <div className="relative h-48 mt-4">
+              <Image
+                src={convertImagePath(roomtype.roomImage)}
+                alt={roomtype.name}
+                layout="fill"
+                objectFit="contain"
+                className="rounded-md"
+              />
+              <Button className="bg-slate-700" type="primary" onClick={() => showModal(roomtype)}>
+                View Detail
+              </Button>
+            </div>
+          </div>
         </div>
+      ))}
       </div>
-      
-      <div className="flex-auto bg-slate-500 p-4 rounded-xl text-slate-950">
-        <div className="flex gap-10 mb-10">
-          <label className="text-2xl">Select TypeRoom</label>
-          <select
-            className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
-            name="roomType"
-            onChange={handleRoomTypeChange}
-          >
-            <option value="">Select a room type</option>
-            {roomType.map(roomtype => (
-              <option key={roomtype.id} value={roomtype.id}>
-                {roomtype.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        <div className="flex flex-col mb-4">
-          <button
-            type="submit"
-            className="px-40 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-500"
-          >
-            Book Room
-          </button>
-        </div>
-      </div>
-    </form>
+      <Modal
+        className="text-center"
+        title="Room Type Details"
+        visible={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        {selectedRoomType && (
+          <div className="my-2 text-left">                                               
+            <p><b className="text-sky-700">Name:</b> {selectedRoomType.name}</p>
+            <p><b className="text-sky-700">Capacity:</b> {selectedRoomType.capacity}</p>
+            <p><b className="text-sky-700">Description:</b> {selectedRoomType.desc}</p>
+            <p><b className="text-sky-700">Price Base:</b> {selectedRoomType.priceBase}</p>
+            <p><b className="text-sky-700">Services:</b></p>
+            <ul>
+              {selectedRoomType.roomService.map((rs) => (
+                <li key={rs.id}>
+                  <p className="mx-4" key={rs.service.id}>{rs.service.name} - {rs.quantity}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </Modal>
+    </div>
   );
 };
 

@@ -189,4 +189,13 @@ export async function GET_ALL_COUNTRY() {
   }
   return countries
 }
-  
+
+
+export const convertImagePath = (path: string) => {
+  const splitStr = path.split("/");
+  if (splitStr[0] === "images") {
+    path = path.replace("images", "static");
+  }
+  return `${process.env.NEXT_PUBLIC_IMAGES_FOLDER}${path}`
+}
+

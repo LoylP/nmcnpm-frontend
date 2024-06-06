@@ -23,6 +23,7 @@ interface Room {
 const Page = () => {
     const [roomNumber, setRoomNumber] = useState("");
     const [roomTypeId, setRoomTypeId] = useState("");
+    const [discount, setDiscount] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [roomTypes, setRoomTypes] = useState<roomType[]>([]);
     const [rooms, setRoom] = useState<Room[]>([]);
@@ -52,16 +53,28 @@ const Page = () => {
   
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-    
+
+        try {
+          const newDiscount = parseFloat(discount);
+          if (newDiscount < 0 && newDiscount > 1){
+            window.alert("discount must be between 0 and 1")
+            return
+          }
+        } catch(error){
+          return
+        }
         try {
           const body = {
             roomNumber: parseInt(roomNumber),
             roomTypeId: parseInt(roomTypeId),
+            discount: parseFloat(discount)
           };
+          console.log("room body: ", body)
           const res = await POST({ body }, "v1/admin/room");
           const data = await res.json();
     
           console.log(data); // Đảm bảo console.log hoạt động
+          location.reload()
     
           // Redirect hoặc điều hướng người dùng đến trang khác
           // Ví dụ: router.push("/dashboard");
@@ -122,6 +135,23 @@ const Page = () => {
 
                         <div className="mb-4 mx-auto">
                             <label
+                                htmlFor="discount"
+                                className="block text-sm font-medium text-white"
+                            >
+                                Discount
+                            </label>
+                            <input
+                                type="text"
+                                id="discount"
+                                className="mt-1 p-2 w-full border rounded-md bg-gray-300"
+                                placeholder="Discount..." 
+                                value={discount}
+                                onChange={(e) => setDiscount(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="mb-4 mx-auto">
+                            <label
                                 htmlFor="price"
                                 className="block text-sm font-medium text-white"
                             >
@@ -141,6 +171,8 @@ const Page = () => {
                                 ))}
                             </select>
                         </div>
+
+                        
                         
                     </div>
                     <div className="w-full justify-center mb-4 p-4 mx-auto">

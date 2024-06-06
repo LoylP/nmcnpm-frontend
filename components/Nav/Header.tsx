@@ -6,9 +6,9 @@ import Buttons from "../Buttons/Buttons";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { SiHotelsdotcom } from "react-icons/si";
 import { GrUserAdmin } from "react-icons/gr";
-import { getCookie } from "cookies-next";
+import { deleteCookie, getCookie } from "cookies-next";
 import Link from "next/link";
-import { setCookie } from "cookies-next";
+import { POST } from "@/app/utils";
 
 
 const Header = ({
@@ -25,7 +25,7 @@ const Header = ({
   useEffect(() => {
     const token = getCookie("access_token");
     const user = getCookie("userName"); // Assuming the username is stored in a cookie named "userName"
-    console.log(user);
+    console.log("user: ", user);
 
     if (user) {
       setUsername(user as string);
@@ -43,9 +43,9 @@ const Header = ({
   }, []);
 
   const handleLogout = async (e: React.FormEvent) => {
-      setCookie("access_token", "");
-      setCookie("role_id",0);
-      setCookie("userName","");
+      await POST({}, "v1/auth/logout")
+      deleteCookie("userName");
+      deleteCookie("role_id")
       location.reload()
   };
 
