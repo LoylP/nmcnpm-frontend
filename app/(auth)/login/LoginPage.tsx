@@ -45,8 +45,7 @@ const LoginPage = () => {
       } else {
         router.push("/");
       }
-      // Redirect hoặc điều hướng người dùng đến trang khác
-      // Ví dụ: router.push("/dashboard");
+
     } catch (error) {
       console.error("Error logging in:", error);
       setErrorMessage("Something went wrong. Please try again.");

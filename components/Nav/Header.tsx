@@ -8,6 +8,8 @@ import { SiHotelsdotcom } from "react-icons/si";
 import { GrUserAdmin } from "react-icons/gr";
 import { getCookie } from "cookies-next";
 import Link from "next/link";
+import { setCookie } from "cookies-next";
+
 
 const Header = ({
   services,
@@ -17,16 +19,35 @@ const Header = ({
   isUser: boolean;
 }) => {
   const [username, setUsername] = useState<string | null>(null);
+  const [password, setPassword] = useState("");
+  const [truncated, setTruncated] = useState<string | null>(null);
   const [isLog, setIsLog] = useState<boolean>(false);
   useEffect(() => {
     const token = getCookie("access_token");
     const user = getCookie("userName"); // Assuming the username is stored in a cookie named "userName"
     console.log(user);
+
     if (user) {
       setUsername(user as string);
+
+      const words = user.split("");
+      console.log("word: ", words)
+      if (words.length > 10) {
+        setTruncated(words.slice(0, 10).join("") + "...");
+      } else {
+        setTruncated(user as string);
+      }
+      
       setIsLog(true);
     }
   }, []);
+
+  const handleLogout = async (e: React.FormEvent) => {
+      setCookie("access_token", "");
+      setCookie("role_id",0);
+      setCookie("userName","");
+      location.reload()
+  };
 
   return (
     <nav className="w-full h-20 lg:h-20 text-black bg-slate-950 lg:text-green-400">
@@ -52,12 +73,17 @@ const Header = ({
         </ul>
         {isLog ? (
           <>
-            <div className="hidden lg:inline-flex gap-8 items-center text-black ml-auto">
+            <div className="hidden lg:inline-flex gap-4 items-center text-black ml-auto">
               <BsSearch className="text-xl hover:text-hoverColor text-white" />
-              <button className="bg-green-400 border-radius rounded-2xl p-2 hover:bg-white "><Link href="../profile">
+              <button className="bg-green-600 border-radius rounded-2xl p-2 hover:bg-white "><Link href="../profile">
                 {" "}
-                <div className="text-black font-semibold">{username}</div>
+                <div className="text-white font-semibold">
+                  <p className="truncate">{truncated}</p>
+                </div>
               </Link></button>
+              <button onClick={handleLogout} className="bg-red-700 border-radius text-white rounded-2xl p-2 hover:bg-gray-700">
+                <div className="text-md">Logout</div>
+              </button>
               
             </div>
             <div className="inline-flex lg:hidden">
