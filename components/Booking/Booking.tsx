@@ -34,7 +34,8 @@ const Booking = () => {
 
   const router = useRouter();
 
-  const showModal = (roomType: RoomType) => {
+  const showModal = (roomType: RoomType, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevents the click event from bubbling up to the parent
     setSelectedRoomType(roomType);
     setIsModalOpen(true);
   };
@@ -99,21 +100,40 @@ const Booking = () => {
   };
 
   return (
-    <div className="gap-4 p-2 bg-slate-700">
-      <div className="grid grid-cols-4 gap-8">
+    <div className="gap-4 p-2 bg-slate-500">
+      <div className="grid grid-cols-2 gap-8">
       {roomType.map((roomtype, index) => (
-        <div onClick={() => router.push(`/roomtype/${roomtype.id}`)} key={roomtype.id} className="p-4 rounded-xl font-bold h-full bg-slate-500 text-white hover:cursor-pointer transition-colors duration-200 hover:bg-cyan-800 ">
-          <div className="w-[90%] h-[90%] rounded-md overflow-hidden mb-4">
-            {roomtype.name}
-            <div className="relative h-48 mt-4">
-              <Image
-                src={convertImagePath(roomtype.roomImage)}
-                alt={roomtype.name}
-                layout="fill"
-                objectFit="contain"
-                className="rounded-md"
-              />
-              <Button className="bg-slate-700" type="primary" onClick={() => showModal(roomtype)}>
+        <div 
+          onClick={() => router.push(`/roomtype/${roomtype.id}`)} 
+          key={roomtype.id} 
+          className="flex flex-row p-4 rounded-xl font-bold bg-slate-300 text-black hover:cursor-pointer transition-colors duration-200 hover:bg-white"
+        >
+          <div className="relative w-[45%] h-72 overflow-hidden mb-4">
+            <Image
+              src={convertImagePath(roomtype.roomImage)}
+              alt={roomtype.name}
+              layout="fill"
+              objectFit="cover"
+              className="rounded-2xl"
+            />
+          </div>
+          <div className="relative w-full lg:w-[55%] h-72 p-4 flex flex-col justify-between">
+            <div>
+              <b className="text-xl text-blue-800">{roomtype.name}</b>
+              <div className="flex text-gray-700 mt-2">
+                <b className="mr-2 text-blue-800">Capacity:</b>{roomtype.capacity}
+              </div>
+              <div className="mt-2 text-gray-700 overflow-hidden text-ellipsis break-words">Description: {roomtype.desc}</div>
+            </div>
+            <div className="flex justify-end gap-2 mt-4">
+              <button className="bg-yellow-500 text-gray-600 px-2 rounded-2xl">
+                Price: {roomtype.priceBase}
+              </button>
+              <Button 
+                className="bg-green-600" 
+                type="primary" 
+                onClick={(e) => showModal(roomtype, e)}
+              >
                 View Detail
               </Button>
             </div>
