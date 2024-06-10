@@ -23,7 +23,6 @@ const Header = ({
   const [truncated, setTruncated] = useState<string | null>(null);
   const [isLog, setIsLog] = useState<boolean>(false);
   useEffect(() => {
-    const token = getCookie("access_token");
     const user = getCookie("userName"); // Assuming the username is stored in a cookie named "userName"
     console.log("user: ", user);
 
@@ -37,16 +36,16 @@ const Header = ({
       } else {
         setTruncated(user as string);
       }
-      
+
       setIsLog(true);
     }
   }, []);
 
   const handleLogout = async (e: React.FormEvent) => {
-      await POST({}, "v1/auth/logout")
-      deleteCookie("userName");
-      deleteCookie("role_id")
-      location.reload()
+    await POST({}, "v1/auth/logout")
+    deleteCookie("userName");
+    deleteCookie("role_id")
+    location.reload()
   };
 
   return (
@@ -84,7 +83,7 @@ const Header = ({
               <button onClick={handleLogout} className="bg-red-700 border-radius text-white rounded-2xl p-2 hover:bg-gray-700">
                 <div className="text-md">Logout</div>
               </button>
-              
+
             </div>
             <div className="inline-flex lg:hidden">
               <FiMenu className="text-3xl text-white" />

@@ -45,33 +45,36 @@ const Info = () => {
     const fetchData = async () => {
       try {
         const res = await GET("v1/user");
+        if (res.statusCode == 401) {
+          router.push("/login")
+          return;
+        }
         const data = res;
         if (data && data.data && data.data.length > 0) {
           setUser(data.data[0]);
         }
         const avatarPath = await GET("v1/user/user_avatar");
         const all_countries = await GET_ALL_COUNTRY();
-        if (all_countries){
-          setCountryResponse(all_countries);
-        }
         if (all_countries) {
+          setCountryResponse(all_countries);
           setCountries(Array.from(all_countries.keys()));
           // setCity(countryResponse.get(user?.country))
           setCity(all_countries.get(data.data[0].country));
         } else {
           setError("Failed to fetch countries");
         }
+
         if (avatarPath) {
           const splitStr = avatarPath.result.split("/");
           if (splitStr[0] === "images") {
             avatarPath.result = avatarPath.result.replace("images", "static");
-          }   
+          }
           setAvatar(`${process.env.NEXT_PUBLIC_IMAGES_FOLDER}${avatarPath.result}`);
         } else {
           setError("Failed to set avatar");
         }
-        
-        
+
+
       } catch (error) {
         console.error("Error fetching user:", error);
       }
@@ -96,20 +99,21 @@ const Info = () => {
     const selectedCity = e.target.value;
     setUser(prevUser => prevUser ? { ...prevUser, city: selectedCity } : null);
   };
-  
-  
+
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (user) {
       try {
-        if (typeof(user.gender) === "string") {
+        if (typeof (user.gender) === "string") {
           user.gender = parseInt(user.gender);
         }
         const res = await PATCH("v1/user", user);
         const data = await res.json();
         if (data.status === 200) {
           setError(null);
+          location.reload()
         } else {
           setError(data.message || "Failed to update user");
         }
@@ -161,7 +165,7 @@ const Info = () => {
       <div className="p-4 rounded-xl font-bold h-1/2 bg-slate-500 text-white">
         <div className="w-72 h-72 relative rounded-md overflow-hidden mb-4">
           {avatar ? (
-            <Image loader={() => avatar} alt="User Avatar" className="rounded-full" src={avatar} width={280} height={340}/>
+            <Image loader={() => avatar} alt="User Avatar" className="rounded-full" src={avatar} width={280} height={340} />
           ) : (
             <p>Loading avatar...</p>
           )}
@@ -187,7 +191,7 @@ const Info = () => {
           )}
         </div>
       </div>
-      
+
       <div className="flex-auto bg-slate-500 p-4 rounded-xl text-slate-950">
         <div className="flex gap-10 mb-10">
           <div className="flex flex-col w-1/2">

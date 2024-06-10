@@ -31,7 +31,6 @@ const Menu = () => {
   const pathname = usePathname();
 
   useEffect(() => {
-    const token = getCookie("access_token");
     const user = getCookie("userName"); // Assuming the username is stored in a cookie named "userName"
     console.log(user);
     if (user) {
@@ -90,14 +89,12 @@ const Menu = () => {
 
   return (
     <nav
-      className={`bg-sky-950 p-5 py-10 duration-300 relative ${
-        open ? "w-64" : "w-24"
-      }`}
+      className={`bg-sky-950 p-5 py-10 duration-300 relative ${open ? "w-64" : "w-24"
+        }`}
     >
       <div
-        className={`fixed top-2 left-4 flex items-center text-white text-3xl cursor-pointer bg-sky-950 w-24 border-sky-950 border-2 rounded-full ${
-          !open && "rotate-180 top-2 left-0 z-10 "
-        }`}
+        className={`fixed top-2 left-4 flex items-center text-white text-3xl cursor-pointer bg-sky-950 w-24 border-sky-950 border-2 rounded-full ${!open && "rotate-180 top-2 left-0 z-10 "
+          }`}
         onClick={() => setOpen(!open)}
       >
         <BiSolidChevronsLeft />
@@ -105,23 +102,20 @@ const Menu = () => {
 
       <div className="flex mt-1 items-center fixed text-yellow-400">
         <div
-          className={`cursor-pointer duration-500 text-4xl ${
-            open && "rotate-[360deg] "
-          }`}
+          className={`cursor-pointer duration-500 text-4xl ${open && "rotate-[360deg] "
+            }`}
         >
           <SiHotelsdotcom className="mr-0" />
         </div>
         <h1
-          className={`origin-left font-medium text-5xl duration-200 ${
-            !open && "scale-0"
-          }`}
+          className={`origin-left font-medium text-5xl duration-200 ${!open && "scale-0"
+            }`}
         >
           H
         </h1>
         <h1
-          className={`origin-left font-medium text-5xl duration-200 text-green-400 ${
-            !open && "scale-0"
-          }`}
+          className={`origin-left font-medium text-5xl duration-200 text-green-400 ${!open && "scale-0"
+            }`}
         >
           NP
         </h1>
@@ -136,11 +130,10 @@ const Menu = () => {
               <Link
                 href={item.path}
                 key={idx}
-                className={`flex items-center p-3 gap-2 my-2 rounded-lg text-yellow-100 ${
-                  pathname === item.path
+                className={`flex items-center p-3 gap-2 my-2 rounded-lg text-yellow-100 ${pathname === item.path
                     ? "bg-sky-900 text-white"
                     : "hover:bg-sky-900"
-                }`}
+                  }`}
               >
                 {item.icon}
                 <span

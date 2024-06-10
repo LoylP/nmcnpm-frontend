@@ -4,6 +4,7 @@ import { GET, POST, DELETE, PATCH, POST_UPLOAD } from "@/app/utils";
 import { Button, Modal, message, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import type { UploadProps } from 'antd';
+import { useRouter } from "next/navigation";
 
 interface Service {
     id: number;
@@ -43,6 +44,7 @@ const Page = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
+    const router = useRouter();
 
     const showModal = (roomType: RoomType) => {
         setSelectedRoomType(roomType);
@@ -98,6 +100,10 @@ const Page = () => {
         const fetchRoomTypes = async () => {
             try {
                 const res = await GET("v1/room_type");
+                if (res.statusCode == 401) {
+                    router.push("/login");
+                    return;
+                }
                 setRoomTypes(res.data);
             } catch (error) {
                 console.error("Error fetching room types:", error);
@@ -107,6 +113,10 @@ const Page = () => {
         const fetchServices = async () => {
             try {
                 const res = await GET("v1/services");
+                if (res.statusCode == 401) {
+                    router.push("/login");
+                    return;
+                }
                 setServices(res.data);
             } catch (error) {
                 console.error("Error fetching services:", error);
@@ -194,37 +204,37 @@ const Page = () => {
             const res = await POST_UPLOAD(`v1/room_type/room_type/upload/${selectedRoomType?.id}`, formData);
             const data = res;
             if (res.error == 0) {
-              location.reload()
+                location.reload()
             } else {
                 setErrorMessage(data.message || "Failed to upload avatar");
             }
-        }    catch (error) {
+        } catch (error) {
             console.error("Error uploading image:", error);
             setErrorMessage("Failed to upload image");
         }
-      };
-    
+    };
+
     const props: UploadProps = {
         beforeUpload: (file) => {
             const isVal = (file.type === 'image/png' || file.type === 'image/jpg' || file.type === 'image/jpeg');
             if (!isVal) {
-            message.error(`${file.name} is not a image file`);
+                message.error(`${file.name} is not a image file`);
             }
             return isVal || Upload.LIST_IGNORE;
         },
         onChange: (info) => {
-          console.log(info.fileList);
-          const formData = new FormData();
-          //@ts-ignore
-          formData.append("file", info.fileList[0].originFileObj);
-          try {
-            handleUpload(formData)
-          } catch (error) {
-            console.error("Error uploading avatar:", error);
-            setErrorMessage("Failed to upload avatar");
-          }
+            console.log(info.fileList);
+            const formData = new FormData();
+            //@ts-ignore
+            formData.append("file", info.fileList[0].originFileObj);
+            try {
+                handleUpload(formData)
+            } catch (error) {
+                console.error("Error uploading avatar:", error);
+                setErrorMessage("Failed to upload avatar");
+            }
         },
-      };
+    };
 
     return (
         <div className="flex flex-col items-center mt-5">
@@ -357,7 +367,7 @@ const Page = () => {
                                             </Button>
                                             <Modal className="text-center" title="Room Type Details" open={isModalOpen} onOk={handleCancel} onCancel={handleCancel}>
                                                 {selectedRoomType && (
-                                                    <div className="my-2 text-left">                                               
+                                                    <div className="my-2 text-left">
                                                         <p><b className="text-sky-700">Name:</b> {selectedRoomType.name}</p>
                                                         <p><b className="text-sky-700">Capacity:</b> {selectedRoomType.capacity}</p>
                                                         <p><b className="text-sky-700">Description:</b> {selectedRoomType.desc}</p>
@@ -428,7 +438,7 @@ const Page = () => {
                                                         </div>
                                                     </div>
                                                 )}
-                                            
+
                                             </Modal>
                                             <button
                                                 onClick={() => handleDelete(roomType.id)}

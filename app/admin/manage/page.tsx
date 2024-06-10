@@ -2,21 +2,26 @@
 import React, { useEffect, useState } from "react";
 import { GET } from "@/app/utils";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [avatar, setAvatar] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchAvatar = async () => {
       try {
         const avatarPath = await GET("v1/user/user_avatar");
-        console.log(avatarPath.result)
+        if (avatarPath.statusCode == 401) {
+          router.push("/login");
+          return;
+        }
         if (avatarPath) {
           const split_str = avatarPath.result.split("/")
-          if (split_str[0] === "images"){
+          if (split_str[0] === "images") {
             avatarPath.result = avatarPath.result.replace("images", "static")
-          }   
+          }
           setAvatar(`${process.env.NEXT_PUBLIC_IMAGES_FOLDER}${avatarPath.result}`);
         } else {
           setError("Failed to set avatar");
@@ -44,7 +49,7 @@ const Page = () => {
           <Link href={"/admin/room"}>
             <button className="bg-slate-400 w-30 h-20 p-2 rounded-2xl hover:bg-green-400">Add Room</button>
           </Link>
-        </div>    
+        </div>
       </div>
     </div>
   );

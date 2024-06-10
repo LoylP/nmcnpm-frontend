@@ -52,7 +52,7 @@ const Booking = () => {
     try {
       const res = await POST({}, `v1/room_type/room_type_image/${roomTypeId}`);
       const imagePath = await res.json();
-      
+
       if (imagePath) {
         const splitStr = imagePath.result.split("/");
         if (splitStr[0] === "images") {
@@ -67,11 +67,15 @@ const Booking = () => {
       setError("Failed to fetch image");
     }
   };
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await GET("v1/room_type");
+        if (res.statusCode == 401) {
+          router.push('/login');
+          return;
+        }
         const data = await res.data;
         setRoomType(data);
 
@@ -86,7 +90,7 @@ const Booking = () => {
     };
 
     fetchData();
-    
+
   }, []);
 
   const handleRoomTypeChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -95,51 +99,51 @@ const Booking = () => {
     setSelectedRoomType(selectedRoomType);
 
     if (selectedRoomType) {
-        fetchRoomTypeImage(roomTypeId);
+      fetchRoomTypeImage(roomTypeId);
     }
   };
 
   return (
     <div className="gap-4 p-2 bg-slate-500">
       <div className="grid grid-cols-2 gap-8">
-      {roomType.map((roomtype, index) => (
-        <div 
-          onClick={() => router.push(`/roomtype/${roomtype.id}`)} 
-          key={roomtype.id} 
-          className="flex flex-row p-4 rounded-xl font-bold bg-slate-300 text-black hover:cursor-pointer transition-colors duration-200 hover:bg-white"
-        >
-          <div className="relative w-[45%] h-72 overflow-hidden mb-4">
-            <Image
-              src={convertImagePath(roomtype.roomImage)}
-              alt={roomtype.name}
-              layout="fill"
-              objectFit="cover"
-              className="rounded-2xl"
-            />
-          </div>
-          <div className="relative w-full lg:w-[55%] h-72 p-4 flex flex-col justify-between">
-            <div>
-              <b className="text-xl text-blue-800">{roomtype.name}</b>
-              <div className="flex text-gray-700 mt-2">
-                <b className="mr-2 text-blue-800">Capacity:</b>{roomtype.capacity}
+        {roomType.map((roomtype, index) => (
+          <div
+            onClick={() => router.push(`/roomtype/${roomtype.id}`)}
+            key={roomtype.id}
+            className="flex flex-row p-4 rounded-xl font-bold bg-slate-300 text-black hover:cursor-pointer transition-colors duration-200 hover:bg-white"
+          >
+            <div className="relative w-[45%] h-72 overflow-hidden mb-4">
+              <Image
+                src={convertImagePath(roomtype.roomImage)}
+                alt={roomtype.name}
+                layout="fill"
+                objectFit="cover"
+                className="rounded-2xl"
+              />
+            </div>
+            <div className="relative w-full lg:w-[55%] h-72 p-4 flex flex-col justify-between">
+              <div>
+                <b className="text-xl text-blue-800">{roomtype.name}</b>
+                <div className="flex text-gray-700 mt-2">
+                  <b className="mr-2 text-blue-800">Capacity:</b>{roomtype.capacity}
+                </div>
+                <div className="mt-2 text-gray-700 overflow-hidden text-ellipsis break-words">Description: {roomtype.desc}</div>
               </div>
-              <div className="mt-2 text-gray-700 overflow-hidden text-ellipsis break-words">Description: {roomtype.desc}</div>
-            </div>
-            <div className="flex justify-end gap-2 mt-4">
-              <button className="bg-yellow-500 text-gray-600 px-2 rounded-2xl">
-                Price: {roomtype.priceBase}
-              </button>
-              <Button 
-                className="bg-green-600" 
-                type="primary" 
-                onClick={(e) => showModal(roomtype, e)}
-              >
-                View Detail
-              </Button>
+              <div className="flex justify-end gap-2 mt-4">
+                <button className="bg-yellow-500 text-gray-600 px-2 rounded-2xl">
+                  Price: {roomtype.priceBase}
+                </button>
+                <Button
+                  className="bg-green-600"
+                  type="primary"
+                  onClick={(e) => showModal(roomtype, e)}
+                >
+                  View Detail
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
       </div>
       <Modal
         className="text-center"
@@ -149,7 +153,7 @@ const Booking = () => {
         onCancel={handleCancel}
       >
         {selectedRoomType && (
-          <div className="my-2 text-left">                                               
+          <div className="my-2 text-left">
             <p><b className="text-sky-700">Name:</b> {selectedRoomType.name}</p>
             <p><b className="text-sky-700">Capacity:</b> {selectedRoomType.capacity}</p>
             <p><b className="text-sky-700">Description:</b> {selectedRoomType.desc}</p>

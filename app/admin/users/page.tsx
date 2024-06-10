@@ -5,6 +5,7 @@ import Link from "next/link";
 import React, { Suspense, useEffect, useState } from "react";
 import { GET, DELETE } from "@/app/utils";
 import Add from "@/components/Dashboard/add/add";
+import { useRouter } from "next/navigation";
 
 // Define the User type
 interface role {
@@ -30,11 +31,16 @@ interface User {
 
 const UsersPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const router = useRouter()
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await GET("v1/admin/user");
+        if (res.statusCode == 401) {
+          router.push("/login")
+          return;
+        }
         // @ts-ignore
         setUsers(res.data);
       } catch (error) {
@@ -95,25 +101,25 @@ const UsersPage: React.FC = () => {
           {users.map((user, ind) => (
             <tr key={user.id}>
               <td>
-                <Add content={ind}/>
+                <Add content={ind} />
               </td>
               <td>
-                <Add content={user.userName}/>
+                <Add content={user.userName} />
               </td>
               <td>
-                <Add content={user.fullName}/>
+                <Add content={user.fullName} />
               </td>
               <td>
-                <Add content={user.email}/>
+                <Add content={user.email} />
               </td>
               <td>
-                <Add content={user.phone}/>
+                <Add content={user.phone} />
               </td>
               <td>
-                <Add content={new Date(user.createdAt).toLocaleDateString()}/>
+                <Add content={new Date(user.createdAt).toLocaleDateString()} />
               </td>
               <td>
-                <Add content={user.role.name}/>
+                <Add content={user.role.name} />
               </td>
               <td>
                 <div className="flex mt-2 justify-center item-center gap-5">

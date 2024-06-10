@@ -1,7 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import { GET } from "@/app/utils";
+import React, { useEffect } from "react";
 import Menu from "../../../components/Nav/Menu";
 import Header from "../../../components/Nav/Header";
 import Info from "../../../components/Info/Info";
