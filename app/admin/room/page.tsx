@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { GET, POST, DELETE } from "@/app/utils"
 import Add from "@/components/Dashboard/add/add";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface roomType {
   id: number;

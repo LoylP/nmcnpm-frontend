@@ -36,27 +36,10 @@ const menuItems = [
         path: "/admin/manage",
         icon: <GrUserAdmin />,
       },
-    
-      {
-        title: "History",
-        path: "/admin/history",
-        icon: <FaHistory />,
-      },
       {
         title: "Revenue",
         path: "/admin/revenue",
         icon: <MdWork />,
-      },
-    ],
-  },
-
-  {
-    title: "Function",
-    list: [
-      {
-        title: "Settings",
-        path: "/admin/settings",
-        icon: <MdOutlineSettings />,
       },
     ],
   },
