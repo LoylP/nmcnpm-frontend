@@ -1,8 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { GET, POST, DELETE_Ser, PATCH } from "@/app/utils"
 import Add from "@/components/Dashboard/add/add";
 import { Button, Modal, message, Space } from 'antd';
+import Search from "@/components/Dashboard/search/search";
 
 interface Service {
     id: number;
@@ -21,6 +22,7 @@ const Page = () => {
     const [selectedServices, setSelectedServices] = useState<Service | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
+    const [searchQuery, setSearchQuery] = useState<string>("");
 
     const showModal = (service: Service) => {
         setSelectedServices(service);
@@ -125,6 +127,11 @@ const Page = () => {
         setSelectedServices((prevService) => prevService ? { ...prevService, [name]: value } : null);
     };
 
+    //Search
+    const filteredService = services.filter(ser =>
+      ser.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <div className="flex mt-auto">
             <div className="w-1/3 mt-5">
@@ -185,6 +192,11 @@ const Page = () => {
             <div className="w-2/3"><div className="bg-slate-800 p-5 rounded-lg mt-10">
       <div className="flex items-center justify-between">
       </div>
+      <div className="flex items-center justify-between">
+          <Suspense>
+          <Search placeholder="Search for a roomType..." onSearch={setSearchQuery} />
+          </Suspense>
+      </div>
       <table className="w-full mt-3 divide-y">
         <thead>
           <tr className="text-green-400">
@@ -197,7 +209,7 @@ const Page = () => {
           </tr>
         </thead>
         <tbody>
-          {services.map((ser, idx) => (
+          {filteredService.map((ser, idx) => (
             <tr key={ser.id}>
                 <td>
                     <Add content={idx}/>

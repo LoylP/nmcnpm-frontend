@@ -1,9 +1,10 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { GET, POST, DELETE, PATCH, POST_UPLOAD } from "@/app/utils";
 import { Button, Modal, message, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import type { UploadProps } from 'antd';
+import Search from "@/components/Dashboard/search/search";
 import { useRouter } from "next/navigation";
 
 interface Service {
@@ -43,6 +44,7 @@ const Page = () => {
     const [selectedRoomType, setSelectedRoomType] = useState<RoomType | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState<string>("");
     const [messageApi, contextHolder] = message.useMessage();
     const router = useRouter();
 
@@ -236,6 +238,11 @@ const Page = () => {
         },
     };
 
+    //Search
+    const filteredRoomTypes = roomTypes.filter(roomType =>
+        roomType.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <div className="flex flex-col items-center mt-5">
             <div className="w-full max-w-4xl">
@@ -342,6 +349,11 @@ const Page = () => {
             </div>
             <div className="w-full max-w-6xl mt-10">
                 <div className="bg-slate-800 p-5 rounded-lg">
+                    <div className="flex items-center justify-between">
+                        <Suspense>
+                        <Search placeholder="Search for a roomType..." onSearch={setSearchQuery} />
+                        </Suspense>
+                    </div>
                     <table className="w-full divide-y divide-gray-700">
                         <thead>
                             <tr className="text-green-400">
@@ -353,7 +365,7 @@ const Page = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {roomTypes.map((roomType, idx) => (
+                            {filteredRoomTypes.map((roomType, idx) => (
                                 <tr key={roomType.id}>
                                     <td className="py-2 text-center">{idx + 1}</td>
                                     <td className="py-2 text-center">{roomType.name}</td>

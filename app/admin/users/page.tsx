@@ -7,7 +7,6 @@ import { GET, DELETE } from "@/app/utils";
 import Add from "@/components/Dashboard/add/add";
 import { useRouter } from "next/navigation";
 
-// Define the User type
 interface role {
   id: number;
   name: string;
@@ -31,6 +30,7 @@ interface User {
 
 const UsersPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const router = useRouter()
 
   useEffect(() => {
@@ -72,11 +72,16 @@ const UsersPage: React.FC = () => {
     }
   };
 
+  const filteredUsers = users.filter(user =>
+    user.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.fullName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="bg-slate-800 p-5 rounded-lg mt-10">
       <div className="flex items-center justify-between">
         <Suspense>
-          <Search placeholder="Search for a user..." />
+          <Search placeholder="Search for a user..." onSearch={(query) => setSearchQuery(query)} />
         </Suspense>
         <Link href="/admin/users/add">
           <button className="p-1 bg-green-500 text-white border rounded-md cursor-pointer hover:bg-yellow-500">
@@ -98,7 +103,7 @@ const UsersPage: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {users.map((user, ind) => (
+          {filteredUsers.map((user, ind) => (
             <tr key={user.id}>
               <td>
                 <Add content={ind} />

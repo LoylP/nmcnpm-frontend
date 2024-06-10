@@ -264,12 +264,12 @@ export default function Page({ params }: { params: { id: string } }) {
   return (
     <>
     {contextHolder}
-    <div className="flex bg-slate-700 min-h-screen">
+    <div className="flex bg-slate-500 min-h-screen">
       <Menu />
       <main className="flex-1 md:col-span-4 my-4">
         {roomType && (
           <>
-            <div className="flex flex-row w-[80%] mx-auto p-4 rounded-xl font-bold bg-slate-300 text-black hover:cursor-pointer transition-colors duration-200 hover:bg-white">
+            <div className="flex flex-row w-[80%] mx-auto p-4 rounded-xl font-bold bg-slate-300 text-black hover:cursor-pointer transition-colors duration-200 hover:bg-sky-100">
               <div className="relative w-[40%] h-72 overflow-hidden mb-4">
                 <Image
                   // @ts-ignore
@@ -329,8 +329,8 @@ export default function Page({ params }: { params: { id: string } }) {
           </>
         )}
 
-        <Divider className="bg-white-500" />
-        <div className="px-12 py-6">
+        <Divider className="bg-slate-500" />
+        <div className="px-12 py-6 ">
           <Table
             columns={columns}
             dataSource={data}

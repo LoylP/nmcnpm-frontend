@@ -1,7 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { GET, POST, DELETE } from "@/app/utils"
+import React, { useEffect, useState, Suspense } from "react";
+import { GET, POST, DELETE } from "@/app/utils";
 import Add from "@/components/Dashboard/add/add";
+import Search from "@/components/Dashboard/search/search";
 import { useRouter } from "next/navigation";
 
 interface roomType {
@@ -18,7 +19,7 @@ interface Room {
   active: boolean;
   createdAt: Date;
   updatedAt: Date;
-  roomType: roomType
+  roomType: roomType;
 }
 
 const Page = () => {
@@ -27,15 +28,16 @@ const Page = () => {
   const [discount, setDiscount] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [roomTypes, setRoomTypes] = useState<roomType[]>([]);
-  const [rooms, setRoom] = useState<Room[]>([]);
-  const router = useRouter()
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const router = useRouter();
 
   useEffect(() => {
     const fetchRoomTypes = async () => {
       try {
         const res = await GET("v1/room_type");
-        if (res.statusCode == 401) {
-          router.push("/login")
+        if (res.statusCode === 401) {
+          router.push("/login");
           return;
         }
         setRoomTypes(res.data);
@@ -44,17 +46,17 @@ const Page = () => {
       }
     };
 
-    const fetchRoom = async () => {
+    const fetchRooms = async () => {
       try {
         const res = await GET("v1/room/get_room");
-        setRoom(res.data);
+        setRooms(res.data);
       } catch (error) {
-        console.error("Error fetching services:", error);
+        console.error("Error fetching rooms:", error);
       }
     };
 
     fetchRoomTypes();
-    fetchRoom();
+    fetchRooms();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,28 +64,28 @@ const Page = () => {
 
     try {
       const newDiscount = parseFloat(discount);
-      if (newDiscount < 0 && newDiscount > 1) {
-        window.alert("discount must be between 0 and 1")
-        return
+      if (newDiscount < 0 || newDiscount > 1) {
+        window.alert("Discount must be between 0 and 1");
+        return;
       }
     } catch (error) {
-      return
+      return;
     }
+
     try {
       const body = {
         roomNumber: parseInt(roomNumber),
         roomTypeId: parseInt(roomTypeId),
-        discount: parseFloat(discount)
+        discount: parseFloat(discount),
       };
-      console.log("room body: ", body)
       const res = await POST({ body }, "v1/admin/room");
       const data = await res.json();
 
-      console.log(data); // Đảm bảo console.log hoạt động
-      location.reload()
+      console.log(data); // Ensure console.log works
+      location.reload(); // Reload to show new data
 
-      // Redirect hoặc điều hướng người dùng đến trang khác
-      // Ví dụ: router.push("/dashboard");
+      // Redirect or navigate the user to another page
+      // e.g., router.push("/dashboard");
     } catch (error) {
       console.error("Error registering:", error);
       setErrorMessage("Something went wrong. Please try again.");
@@ -97,27 +99,28 @@ const Page = () => {
       );
       if (!confirmDelete) return;
 
-      const res = await DELETE(
-        {},
-        `v1/admin/room/${roomId}`
-      );
+      const res = await DELETE({}, `v1/admin/room/${roomId}`);
       if (res.ok) {
-        setRoom(rooms.filter((room) => room.id !== roomId));
+        setRooms(rooms.filter((room) => room.id !== roomId));
       } else {
-        console.error("Failed to delete service:", await res.json());
+        console.error("Failed to delete room:", await res.json());
       }
     } catch (error) {
-      console.error("Error deleting service:", error);
+      console.error("Error deleting room:", error);
     }
   };
 
-
+  const filteredRooms = rooms.filter(
+    (room) =>
+      room.roomNumber.toString().includes(searchQuery) ||
+      room.roomType.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="flex mt-auto">
       <div className="w-1/3 mt-5">
         <div className="p-4 justify-items-center">
-          <div className=" justify-items-center bg-slate-500 px-3 py-3 rounded-lg shadow-lg mb-0 mx-auto text-black">
+          <div className="justify-items-center bg-slate-500 px-3 py-3 rounded-lg shadow-lg mb-0 mx-auto text-black">
             {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
             <div>
               <form onSubmit={handleSubmit}>
@@ -177,9 +180,6 @@ const Page = () => {
                       ))}
                     </select>
                   </div>
-
-
-
                 </div>
                 <div className="w-full justify-center mb-4 p-4 mx-auto">
                   <button
@@ -194,57 +194,58 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <div className="w-2/3"><div className="bg-slate-800 p-5 rounded-lg mt-10">
-        <div className="flex items-center justify-between">
-        </div>
-        <table className="w-full mt-3 divide-y">
-          <thead>
-            <tr className="text-green-400">
-              <th>Index</th>
-              <th>RoomNumber</th>
-              <th>RoomTypeName</th>
-              <th>CreatedAt</th>
-              <th>UpdatedAt</th>
-              <th>Delete?</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rooms.map((room, idx) => (
-
-              <tr key={room.id}>
-                <td>
-                  <Add content={idx} />
-                </td>
-                <td>
-                  <Add content={room.roomNumber} />
-                </td>
-                <td>
-                  <Add content={room.roomType.name} />
-                </td>
-                <td>
-                  <Add content={new Date(room.createdAt).toLocaleDateString()} />
-                </td>
-                <td>
-                  <Add content={new Date(room.updatedAt).toLocaleDateString()} />
-                </td>
-                <td>
-                  <button
-                    onClick={() => handleDelete(room.id)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    Delete
-                  </button>
-                </td>
+      <div className="w-2/3">
+        <div className="bg-slate-800 p-5 rounded-lg mt-10">
+          <div className="flex items-center justify-between">
+            <Suspense>
+              <Search placeholder="Search for a room..." onSearch={setSearchQuery} />
+            </Suspense>
+          </div>
+          <table className="w-full mt-3 divide-y">
+            <thead>
+              <tr className="text-green-400">
+                <th>Index</th>
+                <th>RoomNumber</th>
+                <th>RoomTypeName</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+                <th>Delete?</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div></div>
+            </thead>
+            <tbody>
+              {filteredRooms.map((room, idx) => (
+                <tr key={room.id}>
+                  <td>
+                    <Add content={idx} />
+                  </td>
+                  <td>
+                    <Add content={room.roomNumber} />
+                  </td>
+                  <td>
+                    <Add content={room.roomType.name} />
+                  </td>
+                  <td>
+                    <Add content={new Date(room.createdAt).toLocaleDateString()} />
+                  </td>
+                  <td>
+                    <Add content={new Date(room.updatedAt).toLocaleDateString()} />
+                  </td>
+                  <td>
+                    <button
+                      onClick={() => handleDelete(room.id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-
   );
 };
-
-
 
 export default Page;
