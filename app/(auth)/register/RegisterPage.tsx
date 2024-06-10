@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { GET_ALL_COUNTRY, POST } from "@/app/utils";
 import { useRouter } from "next/navigation";
+import { message } from "antd";
 
 const RegisterPage = () => {
   const [userName, setUserName] = useState("");
@@ -17,6 +18,21 @@ const RegisterPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [countries, setCountries] = useState<string[]>([]);
   const router = useRouter()
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const success = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Registration successful! Please login to continue.',
+    });
+  };
+
+  const error = () => {
+    messageApi.open({
+      type: 'error',
+      content: 'Registration failed! Please try again.',
+    });
+  };
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -61,9 +77,13 @@ const RegisterPage = () => {
 
       const data = await res.json();
 
-      console.log(data); // Đảm bảo console.log hoạt động
+      if (data.error == 0) {
+        success()
+        setErrorMessage("");
+        router.push("/login")
+        return;
+      }
 
-      router.push("/login")
     } catch (error) {
       console.error("Error registering:", error);
       setErrorMessage("Something went wrong. Please try again.");
@@ -194,32 +214,32 @@ const RegisterPage = () => {
                 className="mt-1 p-2 w-full border rounded-md"
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-              >       
+              >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="">Others</option>
               </select>
             </div>
             <div className="mb-4 mx-14">
-            <label
+              <label
                 htmlFor="country"
                 className="block text-sm font-medium text-gray-600"
               >
                 Country
               </label>
-            <select
-              className="mt-1 p-2 w-full border rounded-md"
-              name="country"
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-            >
-              {countries.map(country => (
-                <option key={country} value={country}>
-                  {country}
-                </option>
-              ))}
-            </select>
-          </div>
+              <select
+                className="mt-1 p-2 w-full border rounded-md"
+                name="country"
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+              >
+                {countries.map(country => (
+                  <option key={country} value={country}>
+                    {country}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             <div className="flex justify-center">
               <button
