@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Divider, Table, DatePicker, InputNumber, Select } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
-import { Button, Modal, Form, Input } from 'antd';
+import { Button, Modal, Form, message } from 'antd';
 import Image from "next/image";
 import moment from 'moment';
 import en from 'antd/es/date-picker/locale/en_US';
@@ -70,7 +70,22 @@ export default function Page({ params }: { params: { id: string } }) {
   const [numUsers, setNumUsers] = useState(1);
   const [checkInDate, setCheckInDate] = useState<string | null>(null);
   const [form] = Form.useForm();
+  const [messageApi, contextHolder] = message.useMessage();
   const router = useRouter();
+
+  const successMessage = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Booking Successfully!',
+    });
+  };
+
+  const errorMessage = () => {
+    messageApi.open({
+      type: 'error',
+      content: 'Something wrong, please try again later!',
+    });
+  };
 
   const showModal = (roomType: RoomType) => {
     setIsModalOpen(true);
@@ -99,11 +114,13 @@ export default function Page({ params }: { params: { id: string } }) {
       };
       const res = await POST({ body }, "v1/room_detail/create");
       const data = await res.json()
-      if (data.ok) {
-        // Handle successful booking
+      console.log("data: ", data)
+      if (data.error == 0) {
+        successMessage();
         setIsBookingModalOpen(false);
+        location.reload()
       } else {
-        // Handle booking failure
+        errorMessage();
         setError("Failed to book the room");
       }
     } catch (error) {
@@ -245,6 +262,8 @@ export default function Page({ params }: { params: { id: string } }) {
   };
 
   return (
+    <>
+    {contextHolder}
     <div className="flex bg-slate-700 min-h-screen">
       <Menu />
       <main className="flex-1 md:col-span-4 my-4">
@@ -336,11 +355,13 @@ export default function Page({ params }: { params: { id: string } }) {
           <DatePicker
             showTime
             locale={buddhistLocale}
+            //@ts-ignore
             onChange={onChange}
           />
           </Form.Item>
         </Form>
       </Modal>
     </div>
+    </>
   );
 }

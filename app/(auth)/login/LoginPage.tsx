@@ -6,15 +6,31 @@ import React, { useEffect, useState } from "react";
 import { POST } from "@/app/utils";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { message } from "antd";
 
 const LoginPage = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
   const router = useRouter();
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
+  };
+
+  const successMessage = (message: string) => {
+    messageApi.open({
+      type: 'success',
+      content: message,
+    });
+  };
+
+  const error = (message: string) => {
+    messageApi.open({
+      type: 'error',
+      content: message,
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,14 +47,12 @@ const LoginPage = () => {
 
       console.log("data: ", data);
       if (data.error == 1){
-        window.alert("Invalid authentication credentials")
+        error(data.message)
       } else {
+        successMessage("Login successfully!")
         setCookie("userName", userName, {
           maxAge: 600,
         });
-
-        window.alert("Login successfully")
-  
         setTimeout(() => {
           if (data.role_id === 1) {
             router.push("/admin");
@@ -55,6 +69,8 @@ const LoginPage = () => {
   };
 
   return (
+    <>
+    {contextHolder}
     <div className="min-h-screen flex justify-center items-center bg-blue-200">
       {/* Background Image */}
       <div
@@ -182,6 +198,7 @@ const LoginPage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

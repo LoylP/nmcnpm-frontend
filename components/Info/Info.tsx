@@ -1,8 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { GET, PATCH, POST_UPLOAD, GET_ALL_COUNTRY } from "@/app/utils";
+import { GET, PATCH, POST_UPLOAD, GET_ALL_COUNTRY, DELETE } from "@/app/utils";
 import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { Modal, message, Table } from 'antd';
 import { styled } from '@mui/material/styles';
 import { Router } from "next/router";
 import { useRouter } from "next/navigation";
@@ -19,6 +20,25 @@ interface User {
   gender: number;
 }
 
+interface Room {
+  id: number;
+  roomNumber: number;
+  discount: number;
+}
+
+interface RoomDetail {
+  id: number;
+  numberUsers: number;
+  checkIn: string;
+  room: Room;
+  bill: Bill;
+}
+
+interface Bill {
+  id: number;
+  paid: boolean;
+}
+
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
@@ -31,6 +51,17 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
+const { Column } = Table;
+interface DataType {
+  key: React.Key;
+  id: number,
+  roomNumber: number,
+  checkIn: Date,
+  billId: string | number,
+  paid: string,
+  action: string,
+}
+
 const Info = () => {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -39,19 +70,72 @@ const Info = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [countries, setCountries] = useState<string[]>([]);
   const [city, setCity] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
+  const [roomDetail, setRoomDetail] = useState<RoomDetail[]>([]);
   const [countryResponse, setCountryResponse] = useState<any>(null);
+  const [messageApi, contextHolder] = message.useMessage();
+  const [roomDetailSource, setRoomDetailSource] = useState<DataType[] | null>(null);
+
+  const successMessage = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Cancel room booking Successfully!',
+    });
+  };
+
+  const errorMessage = (message: string) => {
+    messageApi.open({
+      type: 'error',
+      content: message,
+    });
+  };
+
+  const showModal = (roomDetail: RoomDetail[]) => {
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+      setIsModalOpen(false);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const resBooked = await GET("v1/room_detail")
-        console.log(resBooked)
+        setRoomDetail(resBooked.data)
         const res = await GET("v1/user");
         if (res.statusCode == 401) {
           router.push("/login")
           return;
         }
         const data = res;
+        // @ts-ignore
+        const roomDetailFilter: DataType[] = resBooked.data.map((cur, idx) => {
+          let billId = "None", paid = false;
+          let paidString: string;
+          console.log(cur.bill)
+          if (cur.bill != null){
+            billId = cur.bill.id;
+            paid = cur.bill.paid;
+          }
+          
+          if (paid){
+            paidString = "YES";
+          } else {
+            paidString = "NO";
+          }
+          console.log(billId, paidString)
+          return {
+            key: idx,
+            id: cur.id,
+            roomNumber: cur.room.roomNumber,
+            checkIn: new Date(cur.checkIn).toLocaleString(),
+            billId: billId,
+            paid: paidString,
+          }
+        })
+        setRoomDetailSource(roomDetailFilter);
         if (data && data.data && data.data.length > 0) {
           setUser(data.data[0]);
         }
@@ -100,8 +184,6 @@ const Info = () => {
     const selectedCity = e.target.value;
     setUser(prevUser => prevUser ? { ...prevUser, city: selectedCity } : null);
   };
-
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -156,12 +238,78 @@ const Info = () => {
     }
   };
 
+  const handleDelete = async (billId: number) => {
+    try {
+      const confirmDelete = window.confirm(
+        "Are you sure you want to cancel this room?"
+      );
+      if (!confirmDelete) return;
+
+      const res = await DELETE(
+        {},
+        `v1/room_detail/delete/${billId}`
+      );
+      const data = await res.json()
+      if (data.error == 0) {
+        successMessage();
+        setTimeout(() => {
+          location.reload();
+        }, 500)
+      } else {
+        errorMessage(data.message)
+        console.error("Failed to delete service:", await res.json());
+      }
+    } catch (error) {   
+      console.error("Error deleting service:", error);
+    }
+  };
+
   if (!user) {
     return <div>Loading...</div>;
   }
 
   return (
-
+    <>
+    {contextHolder}
+    <button onClick={() => showModal(roomDetail)} className="gap-4 bg-green-500 rounded-md mx-2">
+      <div className="mx-2 my-1">View Room Booked</div>
+    </button>
+    {roomDetailSource && (
+      <Modal width={"50%"} className="text-center" title="Room Booked" open={isModalOpen} onOk={handleCancel} onCancel={handleCancel}>
+      <Table dataSource={roomDetailSource}>
+        <Column title="Room Number" dataIndex="roomNumber" key="roomNumber" />
+        <Column title="CheckIn" dataIndex="checkIn" key="checkIn" />
+        <Column title="Bill" dataIndex="billId" key="billId" />
+        <Column 
+          title="Paid" 
+          dataIndex="paid" 
+          key="paid" 
+          filters={[{ text: 'YES', value: 'YES' },{ text: 'NO', value: 'NO' },]}
+          onFilter={(value, record: DataType) => record.paid === value}
+          render={(_, record: DataType) => (
+            <span style={{ color: record.paid == "YES" ? 'green' : 'red' }} className="font-bold">
+              {record.paid == "YES" ? 'YES' : 'NO'}
+            </span>
+          )}
+        />
+        <Column 
+          title="Action" 
+          dataIndex="action" 
+          key="action" 
+          render={(_, record: DataType) => (
+            record.paid == "NO" ? (
+              <button
+              onClick={() => handleDelete(record.id)}
+              className="mx-2 text-red-300 hover:text-red-500 font-bold"
+            >
+              Cancel
+            </button>
+            ): null
+          )} 
+        />
+      </Table>
+    </Modal>
+    )}
     <form onSubmit={handleSubmit} className="flex mt-4 gap-4 p-2 bg-slate-700">
       <div className="p-4 rounded-xl font-bold h-1/2 bg-slate-500 text-white">
         <div className="w-72 h-72 relative rounded-md overflow-hidden mb-4">
@@ -190,6 +338,7 @@ const Info = () => {
               </button>
             </div>
           )}
+          
         </div>
       </div>
 
@@ -294,6 +443,7 @@ const Info = () => {
         </div>
       </div>
     </form>
+    </>
   );
 };
 
