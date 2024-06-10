@@ -192,6 +192,9 @@ export async function GET_ALL_COUNTRY() {
 
 
 export const convertImagePath = (path: string) => {
+  if (path == null) {
+    return
+  }
   const splitStr = path.split("/");
   if (splitStr[0] === "images") {
     path = path.replace("images", "static");

@@ -114,6 +114,7 @@ const Booking = () => {
           >
             <div className="relative w-[45%] h-72 overflow-hidden mb-4">
               <Image
+                // @ts-ignore
                 src={convertImagePath(roomtype.roomImage)}
                 alt={roomtype.name}
                 layout="fill"
