@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { cookies } from 'next/headers'
 import MenuLink from "./menuLink/menuLink";
 
 import {
@@ -8,7 +9,6 @@ import {
   MdHome,
   MdOutlineSettings,
 } from "react-icons/md";
-import { FaHistory } from "react-icons/fa";
 import { GrUserAdmin } from "react-icons/gr";
 // import { auth, signOut } from "@/app/auth";
 
@@ -45,8 +45,11 @@ const menuItems = [
   },
 ];
 
-const Sidebar = () => {
-  //   const { user } = await auth();
+interface Prop {
+  adminName: string
+}
+
+const Sidebar = (props: Prop) => {
   return (
     <div className="sticky top-10">
       <div className="flex items-center gap-5 mb-5 w-60">
@@ -58,7 +61,7 @@ const Sidebar = () => {
           height="50"
         />
         <div className="flex flex-col">
-          <span className="font-medium">LoylP</span>
+          <span className="font-medium">{props.adminName}</span>
           <span className="text-slate-300 text-xs">Administrator</span>
         </div>
       </div>

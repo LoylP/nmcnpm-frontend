@@ -76,27 +76,8 @@ const Page = () => {
 
   return (
     <div className="flex flex-col bg-slate-800 mt-10 gap-1">
-      {/* <div className="flex flex-col gap-5">
-        <div className="flex-col">
-          <strong className="block my-4 text-red-400">1. Service, RoomType, Room Management</strong>
-          <div className="flex gap-5 justify-between">
-            <Link href={"/admin/services"}>
-              <button className="bg-slate-400 w-30 h-20 p-2 rounded-2xl hover:bg-green-400">Add Service</button>
-            </Link>
-            <Link href={"/admin/roomtype"}>
-              <button className="bg-slate-400 w-30 h-20 p-2 rounded-2xl hover:bg-green-400">Add RoomType</button>
-            </Link>
-            <Link href={"/admin/room"}>
-              <button className="bg-slate-400 w-30 h-20 p-2 rounded-2xl hover:bg-green-400">Add Room</button>
-            </Link>
-          </div>
-        </div>
-        <div className="">
-          <strong className="block my-4 text-red-400">2. Bill Management</strong>
-        </div>
-      </div> */}
       <div className="flex mx-auto my-2">
-        <p className="text-3xl font-bold text-red-400">Management</p>
+        <h1 className="text-3xl font-bold text-red-400">Management</h1>
       </div>
       <div>
         <Table dataSource={dataSource}>
