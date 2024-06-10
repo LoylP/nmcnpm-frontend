@@ -1,8 +1,9 @@
 "use client";
 import { BiHomeAlt, BiBrightness } from "react-icons/bi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { POST } from "@/app/utils";
+import { GET_ALL_COUNTRY, POST } from "@/app/utils";
+import { useRouter } from "next/navigation";
 
 const RegisterPage = () => {
   const [userName, setUserName] = useState("");
@@ -11,9 +12,26 @@ const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
-  const [gender, setGender] = useState<string | number>("");
+  const [country, setCountry] = useState("");
+  const [gender, setGender] = useState<string | number>("male");
   const [errorMessage, setErrorMessage] = useState("");
+  const [countries, setCountries] = useState<string[]>([]);
+  const router = useRouter()
 
+  useEffect(() => {
+    const fetchCountries = async () => {
+      const all_countries = await GET_ALL_COUNTRY();
+      console.log(all_countries)
+      if (all_countries) {
+        setCountries(Array.from(all_countries.keys()));
+        // setCity(countryResponse.get(user?.country))
+      } else {
+        setErrorMessage("Failed to fetch countries");
+      }
+    }
+
+    fetchCountries()
+  }, [])
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -29,7 +47,9 @@ const RegisterPage = () => {
         fullName: fullName,
         phone: phone,
         gender: gender,
+        country: country,
         salary: 1,
+
       };
 
       let genderId;
@@ -43,13 +63,13 @@ const RegisterPage = () => {
 
       console.log(data); // Đảm bảo console.log hoạt động
 
-      // Redirect hoặc điều hướng người dùng đến trang khác
-      // Ví dụ: router.push("/dashboard");
+      router.push("/login")
     } catch (error) {
       console.error("Error registering:", error);
       setErrorMessage("Something went wrong. Please try again.");
     }
   };
+
 
   return (
     <div className="absolute inset-0 flex  p-5 border-slate-500 bg-slate-400">
@@ -174,12 +194,32 @@ const RegisterPage = () => {
                 className="mt-1 p-2 w-full border rounded-md"
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-              >
-                <option value="">Choose your gender</option>
+              >       
                 <option value="male">Male</option>
                 <option value="female">Female</option>
+                <option value="">Others</option>
               </select>
             </div>
+            <div className="mb-4 mx-14">
+            <label
+                htmlFor="country"
+                className="block text-sm font-medium text-gray-600"
+              >
+                Country
+              </label>
+            <select
+              className="mt-1 p-2 w-full border rounded-md"
+              name="country"
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+            >
+              {countries.map(country => (
+                <option key={country} value={country}>
+                  {country}
+                </option>
+              ))}
+            </select>
+          </div>
 
             <div className="flex justify-center">
               <button

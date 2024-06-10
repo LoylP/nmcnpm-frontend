@@ -30,24 +30,23 @@ const LoginPage = () => {
       const data = await res.json();
 
       console.log("data: ", data);
-      // setCookie("access_token", data.access_token, {
-      //   maxAge: 600,
-      // });
-      // setCookie("role_id", data.role_id, {
-      //   maxAge: 600,
-      // });
-      // localStorage.setItem("role_id", data.role_id)
-      setCookie("userName", userName, {
-        maxAge: 600,
-      });
+      if (data.error == 1){
+        window.alert("Invalid authentication credentials")
+      } else {
+        setCookie("userName", userName, {
+          maxAge: 600,
+        });
 
-      setTimeout(() => {
-        if (data.role_id === 1) {
-          router.push("/admin");
-        } else {
-          router.push("/");
-        }
-      }, 1000)
+        window.alert("Login successfully")
+  
+        setTimeout(() => {
+          if (data.role_id === 1) {
+            router.push("/admin");
+          } else {
+            router.push("/");
+          }
+        }, 1000)
+      }
 
     } catch (error) {
       console.error("Error logging in:", error);

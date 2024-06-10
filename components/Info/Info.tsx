@@ -44,6 +44,8 @@ const Info = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const resBooked = await GET("v1/room_detail")
+        console.log(resBooked)
         const res = await GET("v1/user");
         if (res.statusCode == 401) {
           router.push("/login")
@@ -71,9 +73,8 @@ const Info = () => {
           }
           setAvatar(`${process.env.NEXT_PUBLIC_IMAGES_FOLDER}${avatarPath.result}`);
         } else {
-          setError("Failed to set avatar");
+          setError("Failed to fetch user avatar");
         }
-
 
       } catch (error) {
         console.error("Error fetching user:", error);

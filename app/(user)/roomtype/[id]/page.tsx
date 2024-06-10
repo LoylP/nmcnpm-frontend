@@ -1,11 +1,17 @@
-"use client"
+"use client";
 import Menu from "@/components/Nav/Menu";
 import { GET, POST, convertImagePath } from "@/app/utils";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Divider, Table } from 'antd';
+import { Divider, Table, DatePicker, InputNumber, Select } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
-
+import { Button, Modal, Form, Input } from 'antd';
+import Image from "next/image";
+import moment from 'moment';
+import en from 'antd/es/date-picker/locale/en_US';
+import enUS from 'antd/es/locale/en_US';
+import dayjs from 'dayjs';
+import buddhistEra from 'dayjs/plugin/buddhistEra';
 
 interface Room {
   id: number;
@@ -17,7 +23,11 @@ interface Room {
 
 interface DataType {
   key: React.Key;
-
+  id: number;
+  roomNumber: number;
+  active: boolean;
+  discount: number;
+  available: boolean;
 }
 
 interface Service {
@@ -39,6 +49,7 @@ interface RoomType {
   desc: string;
   priceBase: number;
   roomService: RoomService[];
+  roomImage: string;
 }
 
 const services = [
@@ -53,7 +64,57 @@ export default function Page({ params }: { params: { id: string } }) {
   const [room, setRoom] = useState<Room[]>([]);
   const [roomType, setRoomType] = useState<RoomType | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<DataType | null>(null);
+  const [numUsers, setNumUsers] = useState(1);
+  const [checkInDate, setCheckInDate] = useState<string | null>(null);
+  const [form] = Form.useForm();
   const router = useRouter();
+
+  const showModal = (roomType: RoomType) => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleBookingModalOk = async () => {
+    try {
+      const values = await form.validateFields();
+      console.log('Booking Details:', {
+        roomId: selectedRoom?.id,
+        numUsers: values.numUser,
+        checkInDate: values.checkInDate.toISOString(),
+      });
+      const body = {
+        roomId: selectedRoom?.id,
+        numUser: values.numUser,
+        checkIn: values.checkInDate.toISOString(),
+      };
+      const res = await POST({ body }, "v1/room_detail/create");
+      const data = await res.json()
+      if (data.ok) {
+        // Handle successful booking
+        setIsBookingModalOpen(false);
+      } else {
+        // Handle booking failure
+        setError("Failed to book the room");
+      }
+    } catch (error) {
+      console.error("Error booking room:", error);
+      setError("Failed to book the room");
+    }
+  };
+
+  const handleBookingModalCancel = () => {
+    setIsBookingModalOpen(false);
+  };
 
   const computedPrice = (roomType: RoomType) => {
     let price = roomType.priceBase;
@@ -61,32 +122,43 @@ export default function Page({ params }: { params: { id: string } }) {
       price += rs.quantity * rs.service.price;
     });
     return price;
-  }
+  };
+
+  const handleDateChange = (date: moment.Moment | null, dateString: string) => {
+    setCheckInDate(dateString);
+  };
+
+  const defaultValue = dayjs(Date.now());
+  
+  const buddhistLocale: typeof en = {
+    ...en,
+    lang: {
+      ...en.lang,
+      fieldDateFormat: 'YYYY-MM-DD',
+      fieldDateTimeFormat: 'YYYY-MM-DD HH:mm:ss',
+      yearFormat: 'YYYY',
+      cellYearFormat: 'YYYY',
+    },
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const roomTypeRes = await GET(`v1/room_type/get_room_type/${params.id}`);
-        if (roomTypeRes.statusCode == 401) {
+        if (roomTypeRes.statusCode === 401) {
           router.push("/login");
           return;
         }
         const roomTypeData = await roomTypeRes.data;
-        console.log(roomTypeData)
         setRoomType(roomTypeData);
+
         const res = await GET(`v1/room/get_room/room_type/${params.id}`);
-        if (res.statusCode == 401) {
+        if (res.statusCode === 401) {
           router.push("/login");
           return;
         }
-
-        const data = await res.data;
-        console.log(data)
-        // console.log(data)
-        setRoom(data);
-        if (data.length > 0) {
-          const initialRoomTypeId = data[0].id;
-        }
+        const roomData = await res.data;
+        setRoom(roomData);
       } catch (error) {
         console.error("Error fetching data:", error);
         setError("Failed to fetch data");
@@ -95,94 +167,78 @@ export default function Page({ params }: { params: { id: string } }) {
     fetchData();
   }, []);
 
+  const handleBookNow = (room: DataType) => {
+    if (!room.available) {
+      return;
+    }
+    setSelectedRoom(room);
+    setIsBookingModalOpen(true);
+  };
+
   const columns: TableColumnsType<DataType> = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      showSorterTooltip: { target: 'full-header' },
-      filters: [
-        {
-          text: 'Joe',
-          value: 'Joe',
-        },
-        {
-          text: 'Jim',
-          value: 'Jim',
-        },
-        {
-          text: 'Submenu',
-          value: 'Submenu',
-          children: [
-            {
-              text: 'Green',
-              value: 'Green',
-            },
-            {
-              text: 'Black',
-              value: 'Black',
-            },
-          ],
-        },
-      ],
-      // specify the condition of filtering result
-      // here is that finding the name started with `value`
-      onFilter: (value, record) => record.name.indexOf(value as string) === 0,
-      sorter: (a, b) => a.name.length - b.name.length,
-      sortDirections: ['descend'],
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      align: 'center',
     },
     {
-      title: 'Age',
-      dataIndex: 'age',
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => a.age - b.age,
+      title: 'Room Number',
+      dataIndex: 'roomNumber',
+      key: 'roomNumber',
+      align: 'center',
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
+      title: 'Discount',
+      dataIndex: 'discount',
+      key: 'discount',
+      align: 'center',
+    },
+    {
+      title: 'Active',
+      dataIndex: 'active',
+      key: 'active',
+      align: 'center',
+      render: (active: boolean) => (active ? 'Yes' : 'No'),
+    },
+    {
+      title: 'Available',
+      dataIndex: 'available',
+      key: 'available',
+      align: 'center',
       filters: [
-        {
-          text: 'London',
-          value: 'London',
-        },
-        {
-          text: 'New York',
-          value: 'New York',
-        },
+        { text: 'Yes', value: true },
+        { text: 'No', value: false },
       ],
-      onFilter: (value, record) => record.address.indexOf(value as string) === 0,
+      onFilter: (value, record) => record.available === value,
+      render: (available: boolean) => (
+        <span style={{ color: available ? 'green' : 'red' }} className="font-bold">
+          {available ? 'Yes' : 'No'}
+        </span>
+      ),
+    },
+    {
+      title: 'Booking',
+      key: 'booking',
+      align: 'center',
+      render: (_, record) => (
+        record.available ? (
+          <Button className="bg-green-500" type="primary" onClick={() => handleBookNow(record)}>
+            Book Now
+          </Button>
+        ) : null
+      ),
     },
   ];
 
-  const roomColumns: TableColumnsType<DataType> = [
-
-  ]
-
-  const data = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: 'New York No. 1 Lake Park',
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 1 Lake Park',
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sydney No. 1 Lake Park',
-    },
-    {
-      key: '4',
-      name: 'Jim Red',
-      age: 32,
-      address: 'London No. 2 Lake Park',
-    },
-  ];
+  const data: DataType[] = room.map((r) => ({
+    key: r.id,
+    id: r.id,
+    roomNumber: r.roomNumber,
+    active: r.active,
+    discount: r.discount,
+    available: !r.booked,
+  }));
 
   const onChange: TableProps<DataType>['onChange'] = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra);
@@ -192,38 +248,68 @@ export default function Page({ params }: { params: { id: string } }) {
     <div className="flex bg-slate-700 min-h-screen">
       <Menu />
       <main className="flex-1 md:col-span-4 my-4">
-        <div className="w-[50%] mx-auto">
-          <div className="bg-white rounded-lg">
-            <strong className="block text-center text-red-400">Room Type Name: {roomType?.name}</strong>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="m-2 text-left">
-                {roomType && (
-                  <>
-                    <p><b className="text-sky-700">Name:</b> {roomType.name}</p>
-                    <p><b className="text-sky-700">Capacity:</b> {roomType.capacity}</p>
-                    <p><b className="text-sky-700">Description:</b> {roomType.desc}</p>
-                    <p><b className="text-sky-700">Price Base:</b> {roomType.priceBase}</p>
-                    <p><b className="text-sky-700">Services:</b></p>
-                    <ul>
-                      {roomType.roomService.map((rs) => (
-                        <li key={rs.id}>
-                          <p className="mx-4" key={rs.service.id}>{rs.service.name} - {rs.quantity}</p>
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                )}
+        {roomType && (
+          <>
+            <div className="flex flex-row w-[80%] mx-auto p-4 rounded-xl font-bold bg-slate-300 text-black hover:cursor-pointer transition-colors duration-200 hover:bg-white">
+              <div className="relative w-[40%] h-72 overflow-hidden mb-4">
+                <Image
+                  // @ts-ignore
+                  src={convertImagePath(roomType?.roomImage)}
+                  alt={roomType?.name}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-2xl"
+                />
               </div>
-              <div className="my-auto text-left">
-                {roomType ? (
-                  <strong>Estimate Price perday: {computedPrice(roomType)}</strong>
-                ) : (
-                  <strong>Loading...</strong>
-                )}
+              <div className="relative w-full lg:w-[55%] h-72 p-4 flex flex-col justify-between">
+                <div>
+                  <b className="text-xl text-blue-800">{roomType?.name}</b>
+                  <div className="flex text-gray-700 mt-2">
+                    <b className="mr-2 text-blue-800">Capacity:</b>{roomType?.capacity}
+                  </div>
+                  <div className="mt-2 text-gray-700 overflow-hidden text-ellipsis break-words">Description: {roomType?.desc}</div>
+                </div>
+                <div className="flex justify-end gap-2 mt-4">
+                  <button className="bg-yellow-500 text-gray-600 px-2 rounded-xl">
+                    Price: {computedPrice(roomType!)}
+                  </button>
+                  <Button
+                    className="bg-green-600"
+                    type="primary"
+                    onClick={() => showModal(roomType!)}
+                  >
+                    View Detail
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+            <Modal
+              className="text-center"
+              title="Room Type Details"
+              visible={isModalOpen}
+              onOk={handleOk}
+              onCancel={handleCancel}
+            >
+              {roomType && (
+                <div className="my-2 text-left">
+                  <p><b className="text-sky-700">Name:</b> {roomType.name}</p>
+                  <p><b className="text-sky-700">Capacity:</b> {roomType.capacity}</p>
+                  <p><b className="text-sky-700">Description:</b> {roomType.desc}</p>
+                  <p><b className="text-sky-700">Price Base:</b> {roomType.priceBase}</p>
+                  <p><b className="text-sky-700">Services:</b></p>
+                  <ul>
+                    {roomType.roomService.map((rs) => (
+                      <li key={rs.id}>
+                        <p className="mx-4" key={rs.service.id}>{rs.service.name} - {rs.quantity}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </Modal>
+          </>
+        )}
+
         <Divider className="bg-white-500" />
         <div className="px-12 py-6">
           <Table
@@ -234,6 +320,27 @@ export default function Page({ params }: { params: { id: string } }) {
           />
         </div>
       </main>
+
+      <Modal
+        title="Book Now"
+        visible={isBookingModalOpen}
+        onOk={handleBookingModalOk}
+        onCancel={handleBookingModalCancel}
+        okText="Book"
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item label="NumUser" name="numUser">
+            <InputNumber min={1} max={4} />
+          </Form.Item>
+          <Form.Item label="Checkin Date" name="checkInDate">
+          <DatePicker
+            showTime
+            locale={buddhistLocale}
+            onChange={onChange}
+          />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
-  )
+  );
 }
