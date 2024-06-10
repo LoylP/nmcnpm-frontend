@@ -110,6 +110,7 @@ const Booking = () => {
         >
           <div className="relative w-[45%] h-72 overflow-hidden mb-4">
             <Image
+              //@ts-ignore
               src={convertImagePath(roomtype.roomImage)}
               alt={roomtype.name}
               layout="fill"
@@ -123,7 +124,7 @@ const Booking = () => {
               <div className="flex text-gray-700 mt-2">
                 <b className="mr-2 text-blue-800">Capacity:</b>{roomtype.capacity}
               </div>
-              <div className="mt-2 text-gray-700 overflow-hidden text-ellipsis break-words">Description: {roomtype.desc}</div>
+              <p className="mt-2 text-gray-700 text-sm overflow-hidden break-words"><b className="text-gray-900">Description:</b> {roomtype.desc}</p>
             </div>
             <div className="flex justify-end gap-2 mt-4">
               <button className="bg-yellow-500 text-gray-600 px-2 rounded-2xl">

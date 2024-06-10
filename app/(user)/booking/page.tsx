@@ -25,7 +25,7 @@ const Page = () => {
         </div>
 
         <div className="px-12 py-6">
-          <Booking></Booking>
+          <Booking/>
         </div>
       </main>
     </div>
