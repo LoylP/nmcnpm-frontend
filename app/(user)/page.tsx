@@ -11,10 +11,10 @@ import { getCookie } from "cookies-next";
 
 function Page() {
   const services = [
-    "Booking",
-    "Services",
-    "Explore",
-    "Rules",
+    {name: "Booking", url: "/booking"},
+    {name: "Services", url: "#"},
+    {name: "Explore", url: "#"},
+    {name: "Rules", url: "#"},
   ];
 
   return (

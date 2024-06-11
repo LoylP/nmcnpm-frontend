@@ -8,12 +8,16 @@ import { deleteCookie, getCookie } from "cookies-next";
 import Link from "next/link";
 import { POST } from "@/app/utils";
 
+interface Service {
+  name: string;
+  url: string
+}
 
 const Header = ({
   services,
   isUser,
 }: {
-  services: string[];
+  services: Service[];
   isUser: boolean;
 }) => {
   const [username, setUsername] = useState<string | null>(null);
@@ -60,12 +64,14 @@ const Header = ({
         <div className="text-2xl uppercase font-bold mx-20"></div>
         <ul className="hidden lg:inline-flex gap-8 uppercase text-sm font-semibold">
           {services.map((service, index) => (
-            <li
+            <Link href={`${service.url}`}>
+              <li
               key={index}
-              className="regular-16 flexCenter cursor-pointer pb-1.5 transition-all hover:font-bold"
+              className="regular-16 bg-green-500 text-black rounded-md p-2 flexCenter cursor-pointer pb-1.5 transition-all hover:font-bold hover:bg-yellow-400 hover:text-black hover:rounded-md hover:mx-2 hover:p-3"
             >
-              {service}
+              {service.name}
             </li>
+            </Link>
           ))}
         </ul>
         {isLog ? (

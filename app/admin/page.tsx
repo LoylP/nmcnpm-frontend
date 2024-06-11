@@ -29,12 +29,8 @@ function Page() {
       {isAdmin ? (
         <>
           <div className="flex bg-slate-800 mt-10 gap-1">
-            <div className="flex flex-col gap-5">
-              <div className="flex gap-5 justify-between">
+            <div className="flex flex-col gap-5 mx-auto w-full">
                 <Card />
-                <Card />
-                <Card />
-              </div>
               <div className="mx-6 my-6">
                 <Status />
               </div>
