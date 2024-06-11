@@ -75,7 +75,7 @@ const Page = () => {
   ]
 
   return (
-    <div className="flex flex-col bg-slate-800 mt-10 gap-1">
+    <div className="flex flex-col bg-gray-200 mt-10 gap-1 rounded-xl">
       <div className="flex mx-auto my-2">
         <h1 className="text-3xl font-bold text-red-400">Management</h1>
       </div>
