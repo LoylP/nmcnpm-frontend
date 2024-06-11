@@ -10,7 +10,6 @@ import type { FilterDropdownProps } from 'antd/es/table/interface';
 import Highlighter from 'react-highlight-words';
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
-import * as moment from 'moment-timezone';
 
 interface User {
     id: number;
@@ -108,7 +107,7 @@ const Page = () => {
         const billData = data.data;
         const billExtracted: BillExtractFromBackend = {
             id: billData.id,
-            priceAll: billData.priceAll,
+            priceAll: billData.priceAll ?? billData.bill.priceAll,
             checkIn: billData.roomDetail.checkIn,
             checkOut: billData.roomDetail.checkOut,
             fullName: billData.roomDetail.user.fullName,
@@ -163,6 +162,7 @@ const Page = () => {
                         paidString = cur.bill.paid ? "Paid" : "Not paid";
                         priceString = cur.bill.priceAll;
                     }
+                    console.log("cur: ", cur)
                     return {
                         key: idx + cur.id,
                         id: cur.id,
