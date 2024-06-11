@@ -459,10 +459,10 @@ const Page = () => {
     return (
         <>
             {contextHolder}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 bg-gray-200 my-10 rounded-xl">
                 <div className="w-full my-4 ">
                     <div className="flex justify-center items-center my-4"><h1 className="text-2xl font-bold text-red-400">Bill Management</h1></div>
-                    <Table columns={columns} dataSource={dataSource} />
+                    <Table columns={columns} dataSource={dataSource}/>
                 </div>
             </div>
         </>

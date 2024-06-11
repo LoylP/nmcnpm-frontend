@@ -11,11 +11,10 @@ import { getCookie } from "cookies-next";
 
 function Page() {
   const services = [
-    "Đặt phòng",
-    "Thuê xe",
-    "Dịch vụ",
-    "Địa điểm tham quan",
-    "Quy tắc chung",
+    "Booking",
+    "Services",
+    "Explore",
+    "Rules",
   ];
 
   return (
