@@ -146,7 +146,7 @@ export default function Page({ params }: { params: { id: string } }) {
   };
 
   const defaultValue = dayjs(Date.now());
-  
+
   const buddhistLocale: typeof en = {
     ...en,
     lang: {
@@ -216,7 +216,11 @@ export default function Page({ params }: { params: { id: string } }) {
       dataIndex: 'active',
       key: 'active',
       align: 'center',
-      render: (active: boolean) => (active ? 'Yes' : 'No'),
+      render: (active: boolean) => (
+        <span style={{ color: active ? 'green' : 'red' }} className="font-bold">
+          {active ? 'Yes' : 'No'}
+        </span>
+      ),
     },
     {
       title: 'Available',
@@ -263,105 +267,105 @@ export default function Page({ params }: { params: { id: string } }) {
 
   return (
     <>
-    {contextHolder}
-    <div className="flex bg-slate-700 min-h-screen">
-      <Menu />
-      <main className="flex-1 md:col-span-4 my-4">
-        {roomType && (
-          <>
-            <div className="flex flex-row w-[80%] mx-auto p-4 rounded-xl font-bold bg-slate-300 text-black hover:cursor-pointer transition-colors duration-200 hover:bg-white">
-              <div className="relative w-[40%] h-72 overflow-hidden mb-4">
-                <Image
-                  // @ts-ignore
-                  src={convertImagePath(roomType?.roomImage)}
-                  alt={roomType?.name}
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-2xl"
-                />
-              </div>
-              <div className="relative w-full lg:w-[55%] h-72 p-4 flex flex-col justify-between">
-                <div>
-                  <b className="text-xl text-blue-800">{roomType?.name}</b>
-                  <div className="flex text-gray-700 mt-2">
-                    <b className="mr-2 text-blue-800">Capacity:</b>{roomType?.capacity}
+      {contextHolder}
+      <div className="flex bg-slate-500 min-h-screen">
+        <Menu />
+        <main className="flex-1 md:col-span-4 my-4">
+          {roomType && (
+            <>
+              <div className="flex flex-row w-[80%] mx-auto p-4 rounded-xl font-bold bg-slate-300 text-black hover:cursor-pointer transition-colors duration-200 hover:bg-sky-100">
+                <div className="relative w-[40%] h-72 overflow-hidden mb-4">
+                  <Image
+                    // @ts-ignore
+                    src={convertImagePath(roomType?.roomImage)}
+                    alt={roomType?.name}
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-2xl"
+                  />
+                </div>
+                <div className="relative w-full lg:w-[55%] h-72 p-4 flex flex-col justify-between">
+                  <div>
+                    <b className="text-xl text-blue-800">{roomType?.name}</b>
+                    <div className="flex text-gray-700 mt-2">
+                      <b className="mr-2 text-blue-800">Capacity:</b>{roomType?.capacity}
+                    </div>
+                    <div className="mt-2 text-gray-700 overflow-hidden text-ellipsis break-words">Description: {roomType?.desc}</div>
                   </div>
-                  <div className="mt-2 text-gray-700 overflow-hidden text-ellipsis break-words">Description: {roomType?.desc}</div>
-                </div>
-                <div className="flex justify-end gap-2 mt-4">
-                  <button className="bg-yellow-500 text-gray-600 px-2 rounded-xl">
-                    Price: {computedPrice(roomType!)}
-                  </button>
-                  <Button
-                    className="bg-green-600"
-                    type="primary"
-                    onClick={() => showModal(roomType!)}
-                  >
-                    View Detail
-                  </Button>
+                  <div className="flex justify-end gap-2 mt-4">
+                    <button className="bg-yellow-500 text-gray-600 px-2 rounded-xl">
+                      Price: {computedPrice(roomType!)}
+                    </button>
+                    <Button
+                      className="bg-green-600"
+                      type="primary"
+                      onClick={() => showModal(roomType!)}
+                    >
+                      More info...
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-            <Modal
-              className="text-center"
-              title="Room Type Details"
-              visible={isModalOpen}
-              onOk={handleOk}
-              onCancel={handleCancel}
-            >
-              {roomType && (
-                <div className="my-2 text-left">
-                  <p><b className="text-sky-700">Name:</b> {roomType.name}</p>
-                  <p><b className="text-sky-700">Capacity:</b> {roomType.capacity}</p>
-                  <p><b className="text-sky-700">Description:</b> {roomType.desc}</p>
-                  <p><b className="text-sky-700">Price Base:</b> {roomType.priceBase}</p>
-                  <p><b className="text-sky-700">Services:</b></p>
-                  <ul>
-                    {roomType.roomService.map((rs) => (
-                      <li key={rs.id}>
-                        <p className="mx-4" key={rs.service.id}>{rs.service.name} - {rs.quantity}</p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </Modal>
-          </>
-        )}
+              <Modal
+                className="text-center"
+                title="Room Type Details"
+                visible={isModalOpen}
+                onOk={handleOk}
+                onCancel={handleCancel}
+              >
+                {roomType && (
+                  <div className="my-2 text-left">
+                    <p><b className="text-sky-700">Name:</b> {roomType.name}</p>
+                    <p><b className="text-sky-700">Capacity:</b> {roomType.capacity}</p>
+                    <p><b className="text-sky-700">Description:</b> {roomType.desc}</p>
+                    <p><b className="text-sky-700">Price Base:</b> {roomType.priceBase}</p>
+                    <p><b className="text-sky-700">Services:</b></p>
+                    <ul>
+                      {roomType.roomService.map((rs) => (
+                        <li key={rs.id}>
+                          <p className="mx-4" key={rs.service.id}>{rs.service.name} - {rs.quantity}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </Modal>
+            </>
+          )}
 
-        <Divider className="bg-white-500" />
-        <div className="px-12 py-6">
-          <Table
-            columns={columns}
-            dataSource={data}
-            onChange={onChange}
-            showSorterTooltip={{ target: 'sorter-icon' }}
-          />
-        </div>
-      </main>
+          <Divider className="bg-slate-500" />
+          <div className="px-12 py-6 ">
+            <Table
+              columns={columns}
+              dataSource={data}
+              onChange={onChange}
+              showSorterTooltip={{ target: 'sorter-icon' }}
+            />
+          </div>
+        </main>
 
-      <Modal
-        title="Book Now"
-        visible={isBookingModalOpen}
-        onOk={handleBookingModalOk}
-        onCancel={handleBookingModalCancel}
-        okText="Book"
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item label="NumUser" name="numUser">
-            <InputNumber min={1} max={4} />
-          </Form.Item>
-          <Form.Item label="Checkin Date" name="checkInDate">
-          <DatePicker
-            showTime
-            locale={buddhistLocale}
-            //@ts-ignore
-            onChange={onChange}
-          />
-          </Form.Item>
-        </Form>
-      </Modal>
-    </div>
+        <Modal
+          title="Book Now"
+          visible={isBookingModalOpen}
+          onOk={handleBookingModalOk}
+          onCancel={handleBookingModalCancel}
+          okText="Book"
+        >
+          <Form form={form} layout="vertical">
+            <Form.Item label="NumUser" name="numUser">
+              <InputNumber min={1} max={4} />
+            </Form.Item>
+            <Form.Item label="Checkin Date" name="checkInDate">
+              <DatePicker
+                showTime
+                locale={buddhistLocale}
+                //@ts-ignore
+                onChange={onChange}
+              />
+            </Form.Item>
+          </Form>
+        </Modal>
+      </div>
     </>
   );
 }
