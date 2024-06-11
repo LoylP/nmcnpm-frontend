@@ -106,6 +106,7 @@ const Page = () => {
             return;
         }
         const billData = data.data;
+        console.log(billData)
         const billExtracted: BillExtractFromBackend = {
             id: billData.id,
             priceAll: billData.priceAll,
