@@ -8,11 +8,12 @@ import Booking from "../../../components/Booking/Booking";
 
 const Page = () => {
   const services = [
-    "Home",
-    "Services",
-    "Explore",
-    "Rule",
+    {name: "Home", url: "/"},
+    {name: "Services", url: "#"},
+    {name: "Explore", url: "#"},
+    {name: "Rules", url: "#"},
   ];
+
 
   return (
     <div className="flex ">
