@@ -105,7 +105,6 @@ const Page = () => {
             return;
         }
         const billData = data.data;
-        console.log(billData)
         const billExtracted: BillExtractFromBackend = {
             id: billData.id,
             priceAll: billData.priceAll ?? billData.bill.priceAll,
@@ -318,7 +317,8 @@ const Page = () => {
             title: "Room Number",
             dataIndex: "roomNumber",
             key: "roomNumber",
-            render: (roomNumber) => <span className="flex justify-center items-center font-bold text-cyan-500">{roomNumber}</span>,
+            width: '10%',
+            ...getColumnSearchProps('roomNumber'),
         },
         {
             title: "UserName",
@@ -374,6 +374,9 @@ const Page = () => {
                 { text: 'None', value: 'None' }
             ],
             onFilter: (value, record) => record.paid === value,
+            // @ts-ignore
+            sorter: (a, b) => a.paid < b.paid,
+            defaultSortOrder: "descend",
             render: (paid) => <a className={`${paid === "Paid" ? "text-green-500" : "text-red-500"} font-bold`}>{paid}</a>,
         },
         {
