@@ -148,10 +148,10 @@ const Page = () => {
         const fetchAllBills = async () => {
             const data = await GET("v1/admin/room_detail");
             if (data.statusCode == 401) {
-                router.push("/login");
+                error(data.message);
+                setTimeout(() => router.push("/login"), 500)
                 return;
             }
-            console.log(data.data)
             if (data.data) {
                 const bills: BillDataType[] = data.data.map((cur: BillBackend, idx: number) => {
                     let paidString: string = "", priceString: string | number = "";
@@ -162,7 +162,6 @@ const Page = () => {
                         paidString = cur.bill.paid ? "Paid" : "Not paid";
                         priceString = cur.bill.priceAll;
                     }
-                    console.log("cur: ", cur)
                     return {
                         key: idx + cur.id,
                         id: cur.id,
@@ -465,7 +464,7 @@ const Page = () => {
             <div className="flex flex-col gap-2 bg-gray-200 my-10 rounded-xl">
                 <div className="w-full my-4 ">
                     <div className="flex justify-center items-center my-4"><h1 className="text-2xl font-bold text-red-400">Bill Management</h1></div>
-                    <Table columns={columns} dataSource={dataSource}/>
+                    <Table columns={columns} dataSource={dataSource} />
                 </div>
             </div>
         </>

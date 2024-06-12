@@ -11,10 +11,9 @@ function Page() {
   const router = useRouter();
 
   useEffect(() => {
-    const roleid = getCookie("role_id");
-    console.log("role_id: ", roleid)
-    if (roleid != 1) {
+    const roleid = parseInt(getCookie("role_id") as string);
 
+    if (roleid != 1) {
       setIsAdmin(false);
       // window.alert("not allow access admin")
       router.push("/")
