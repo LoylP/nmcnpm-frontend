@@ -49,6 +49,11 @@ const Menu = () => {
           icon: <BiHome size={defaultIconSize} />,
         },
         {
+          title: isLog ? (username as string) : "Account",
+          path: "/profile",
+          icon: <BiSolidUserCircle size={defaultIconSize} />,
+        },
+        {
           title: "Introduce",
           path: "#Intro",
           icon: <BiSolidObjectsHorizontalLeft size={defaultIconSize} />,
@@ -56,31 +61,22 @@ const Menu = () => {
         {
           title: "Booking ",
           path: "/booking",
+          icon: <BiBed size={defaultIconSize} />,
+        },
+      
+        {
+          title: "Service",
+          path: "/service",
           icon: <BiListCheck size={defaultIconSize} />,
-        },
-        {
-          title: "Load More",
-          path: "#loadmore",
-          icon: <BiDownload size={defaultIconSize} />,
-        },
-        {
-          title: isLog ? (username as string) : "Account",
-          path: "/profile",
-          icon: <BiSolidUserCircle size={defaultIconSize} />,
         },
       ],
     },
     {
-      title: "Function",
+      title: "More",
       list: [
         {
-          title: "Setting",
-          path: "/setting",
-          icon: <IoSettings size={defaultIconSize} />,
-        },
-        {
           title: "About",
-          path: "/about",
+          path: "/rule",
           icon: <BiInfoCircle size={defaultIconSize} />,
         },
       ],

@@ -206,7 +206,6 @@ const Page = () => {
             const res = await POST_UPLOAD(`v1/room_type/room_type/upload/${selectedRoomType?.id}`, formData);
             const data = res;
             if (res.error == 0) {
-                window.alert(res)
                 location.reload()
             } else {
                 setErrorMessage(data.message || "Failed to upload avatar");

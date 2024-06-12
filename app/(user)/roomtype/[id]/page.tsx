@@ -1,5 +1,6 @@
 "use client";
 import Menu from "@/components/Nav/Menu";
+import Header from "@/components/Nav/Header";
 import { GET, POST, convertImagePath } from "@/app/utils";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -9,9 +10,7 @@ import { Button, Modal, Form, message } from 'antd';
 import Image from "next/image";
 import moment from 'moment';
 import en from 'antd/es/date-picker/locale/en_US';
-import enUS from 'antd/es/locale/en_US';
 import dayjs from 'dayjs';
-import buddhistEra from 'dayjs/plugin/buddhistEra';
 
 interface Room {
   id: number;
@@ -52,14 +51,6 @@ interface RoomType {
   roomImage: string;
 }
 
-const services = [
-  "Đặt phòng",
-  "Thuê xe",
-  "Dịch vụ",
-  "Địa điểm tham quan",
-  "Quy tắc chung",
-];
-
 export default function Page({ params }: { params: { id: string } }) {
   const [room, setRoom] = useState<Room[]>([]);
   const [roomType, setRoomType] = useState<RoomType | null>(null);
@@ -72,6 +63,14 @@ export default function Page({ params }: { params: { id: string } }) {
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const router = useRouter();
+
+  const services = [
+    { name: "Home", url: "/" },
+    { name: "Booking", url: "/booking" },
+    { name: "Services", url: "/service" },
+    { name: "Explore", url: "/explore" },
+    { name: "Rules", url: "/rule" },
+  ];
 
   const successMessage = () => {
     messageApi.open({
@@ -270,12 +269,17 @@ export default function Page({ params }: { params: { id: string } }) {
       {contextHolder}
       <div className="flex bg-slate-500 min-h-screen">
         <Menu />
-        <main className="flex-1 md:col-span-4 my-4">
+        <main className="flex-1 md:col-span-4">
+          <div className="w-full  bg-black opacity-60 text-white mb-10">
+            <Header services={services} isUser={true} />
+          </div>
           {roomType && (
             <>
               <div className="flex flex-row w-[80%] mx-auto p-4 rounded-xl font-bold bg-slate-300 text-black hover:cursor-pointer transition-colors duration-200 hover:bg-sky-100">
                 <div className="relative w-[40%] h-72 overflow-hidden mb-4">
                   <Image
+                    // @ts-ignore
+                    loader={() => convertImagePath(roomType?.roomImage)}
                     // @ts-ignore
                     src={convertImagePath(roomType?.roomImage)}
                     alt={roomType?.name}

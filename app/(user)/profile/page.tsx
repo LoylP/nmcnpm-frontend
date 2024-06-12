@@ -6,11 +6,13 @@ import Info from "../../../components/Info/Info";
 
 const Page = () => {
   const services = [
-    "Home",
-    "Services",
-    "Explore",
-    "Rule",
+    {name: "Home", url: "/"},
+    {name: "Booking", url: "/booking"},
+    {name: "Services", url: "/service"},
+    {name: "Explore", url: "/explore"},
+    {name: "Rules", url: "/rule"},
   ];
+
 
   return (
     <div className="flex ">

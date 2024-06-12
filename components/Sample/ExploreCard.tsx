@@ -1,16 +1,16 @@
 import Image from "next/image";
-import { Space } from "./RoomData";
+import { Explore } from "./RoomData";
 
-interface SpaceCardProps {
-  space: Space;
-  onSpaceClick: (space: Space) => void;
+interface ExploreCardProps {
+  explore: Explore;
+  onExploreClick: (explore: Explore) => void;
 }
 
-const SpaceCard: React.FC<SpaceCardProps> = ({ space, onSpaceClick }) => {
-  const { src, title } = space;
+const ExploreCard: React.FC<ExploreCardProps> = ({ explore, onExploreClick }) => {
+  const { src, title } = explore;
 
   return (
-    <div className="card" onClick={() => onSpaceClick(space)}>
+    <div className="card" onClick={() => onExploreClick(explore)}>
       <div className="relative w-full h-72">
         <Image
           src={src}
@@ -27,4 +27,4 @@ const SpaceCard: React.FC<SpaceCardProps> = ({ space, onSpaceClick }) => {
   );
 };
 
-export default SpaceCard;
+export default ExploreCard;
