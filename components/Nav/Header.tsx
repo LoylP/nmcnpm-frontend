@@ -17,7 +17,7 @@ const Header = ({
   services,
   isUser,
 }: {
-  services: Service[];
+  services?: Service[];
   isUser: boolean;
 }) => {
   const [username, setUsername] = useState<string | null>(null);
@@ -62,18 +62,22 @@ const Header = ({
         )}
 
         <div className="text-2xl uppercase font-bold mx-20"></div>
-        <ul className="hidden lg:inline-flex gap-8 uppercase text-sm font-semibold">
-          {services.map((service, index) => (
-            <Link href={`${service.url}`}>
-              <li
-              key={index}
-              className="regular-16 bg-green-500 text-black rounded-md p-2 flexCenter cursor-pointer pb-1.5 transition-all hover:font-bold hover:bg-yellow-400 hover:text-black hover:rounded-md hover:mx-2 hover:p-3"
-            >
-              {service.name}
-            </li>
-            </Link>
-          ))}
-        </ul>
+        {services ? (
+          <>
+            <ul className="hidden lg:inline-flex gap-8 uppercase text-sm font-semibold">
+              {services.map((service, index) => (
+                <Link key={index} href={`${service.url}`}>
+                  <li
+                    key={index}
+                    className="regular-16 bg-green-500 text-black rounded-md p-2 flexCenter cursor-pointer pb-1.5 transition-all hover:font-bold hover:bg-yellow-400 hover:text-black hover:rounded-md hover:mx-2 hover:p-3"
+                  >
+                    {service.name}
+                  </li>
+                </Link>
+              ))}
+            </ul>
+          </>
+        ) : null}
         {isLog ? (
           <>
             <div className="hidden lg:inline-flex gap-4 items-center text-black ml-auto">

@@ -58,6 +58,7 @@ interface DataType {
   roomNumber: number,
   checkIn: Date,
   billId: string | number,
+  priceAll: number | string,
   paid: string,
   action: string,
 }
@@ -77,10 +78,10 @@ const Info = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [roomDetailSource, setRoomDetailSource] = useState<DataType[] | null>(null);
 
-  const successMessage = () => {
+  const successMessage = (message: string) => {
     messageApi.open({
       type: 'success',
-      content: 'Cancel room booking Successfully!',
+      content: message,
     });
   };
 
@@ -96,7 +97,7 @@ const Info = () => {
   };
 
   const handleCancel = () => {
-      setIsModalOpen(false);
+    setIsModalOpen(false);
   };
 
   useEffect(() => {
@@ -112,15 +113,16 @@ const Info = () => {
         const data = res;
         // @ts-ignore
         const roomDetailFilter: DataType[] = resBooked.data.map((cur, idx) => {
-          let billId = "None", paid = false;
+          let billId: string | number = "None", paid: boolean = false;
           let paidString: string;
-          console.log(cur.bill)
-          if (cur.bill != null){
+          let priceAll: string = "None";
+          if (cur.bill != null) {
             billId = cur.bill.id;
             paid = cur.bill.paid;
+            priceAll = cur.bill.priceAll;
           }
-          
-          if (paid){
+
+          if (paid) {
             paidString = "YES";
           } else {
             paidString = "NO";
@@ -132,6 +134,7 @@ const Info = () => {
             roomNumber: cur.room.roomNumber,
             checkIn: new Date(cur.checkIn).toLocaleString(),
             billId: billId,
+            priceAll: priceAll,
             paid: paidString,
           }
         })
@@ -199,11 +202,12 @@ const Info = () => {
           console.error("Error response from server:", errorText);
           throw new Error("Failed to update user");
         }
-        
+
         const data = await res.json();
         if (data.status === 200) {
           setError(null);
-          location.reload()
+          successMessage('Update profile successfully!');
+          setTimeout(() => location.reload(), 500)
         } else {
           setError(data.message || "Failed to update user");
         }
@@ -258,7 +262,7 @@ const Info = () => {
       );
       const data = await res.json()
       if (data.error == 0) {
-        successMessage();
+        successMessage('Cancel room booking Successfully!');
         setTimeout(() => {
           location.reload();
         }, 500)
@@ -266,7 +270,7 @@ const Info = () => {
         errorMessage(data.message)
         console.error("Failed to delete service:", await res.json());
       }
-    } catch (error) {   
+    } catch (error) {
       console.error("Error deleting service:", error);
     }
   };
@@ -277,179 +281,183 @@ const Info = () => {
 
   return (
     <>
-    {contextHolder}
-    <button onClick={() => showModal(roomDetail)} className="gap-4 bg-green-500 rounded-md mx-2">
-      <div className="mx-2 my-1">View Room Booked</div>
-    </button>
-    {roomDetailSource && (
-      <Modal width={"50%"} className="text-center" title="Room Booked" open={isModalOpen} onOk={handleCancel} onCancel={handleCancel}>
-      <Table dataSource={roomDetailSource}>
-        <Column title="Room Number" dataIndex="roomNumber" key="roomNumber" />
-        <Column title="CheckIn" dataIndex="checkIn" key="checkIn" />
-        <Column title="Bill" dataIndex="billId" key="billId" />
-        <Column 
-          title="Paid" 
-          dataIndex="paid" 
-          key="paid" 
-          filters={[{ text: 'YES', value: 'YES' },{ text: 'NO', value: 'NO' },]}
-          onFilter={(value, record: DataType) => record.paid === value}
-          render={(_, record: DataType) => (
-            <span style={{ color: record.paid == "YES" ? 'green' : 'red' }} className="font-bold">
-              {record.paid == "YES" ? 'YES' : 'NO'}
-            </span>
-          )}
-        />
-        <Column 
-          title="Action" 
-          dataIndex="action" 
-          key="action" 
-          render={(_, record: DataType) => (
-            record.paid == "NO" ? (
-              <button
-              onClick={() => handleDelete(record.id)}
-              className="mx-2 text-red-300 hover:text-red-500 font-bold"
+      {contextHolder}
+      <button onClick={() => showModal(roomDetail)} className="gap-4 bg-green-500 rounded-md mx-2">
+        <div className="mx-2 my-1">View Room Booked</div>
+      </button>
+      {roomDetailSource && (
+        <Modal width={"50%"} className="text-center" title="Room Booked" open={isModalOpen} onOk={handleCancel} onCancel={handleCancel}>
+          <Table dataSource={roomDetailSource}>
+            <Column title="Room Number" dataIndex="roomNumber" key="roomNumber" />
+            <Column title="CheckIn" dataIndex="checkIn" key="checkIn" />
+            <Column title="BillId" dataIndex="billId" key="billId" />
+            <Column title="PriceAll" dataIndex="priceAll" key="priceAll" />
+            <Column
+              title="Paid"
+              dataIndex="paid"
+              key="paid"
+              filters={[{ text: 'YES', value: 'YES' }, { text: 'NO', value: 'NO' },]}
+              onFilter={(value, record: DataType) => record.paid === value}
+              // @ts-ignore
+              sorter={(a, b) => a.paid < b.paid}
+              defaultSortOrder={"descend"}
+              render={(_, record: DataType) => (
+                <span style={{ color: record.paid == "YES" ? 'green' : 'red' }} className="font-bold">
+                  {record.paid == "YES" ? 'YES' : 'NO'}
+                </span>
+              )}
+            />
+            <Column
+              title="Action"
+              dataIndex="action"
+              key="action"
+              render={(_, record: DataType) => (
+                record.paid == "NO" ? (
+                  <button
+                    onClick={() => handleDelete(record.id)}
+                    className="mx-2 text-red-300 hover:text-red-500 font-bold"
+                  >
+                    Cancel
+                  </button>
+                ) : null
+              )}
+            />
+          </Table>
+        </Modal>
+      )}
+      <form onSubmit={handleSubmit} className="flex mt-4 gap-4 p-2 bg-slate-700">
+        <div className="p-4 rounded-xl font-bold h-1/2 bg-slate-500 text-white">
+          <div className="w-72 h-72 relative rounded-md overflow-hidden mb-4">
+            {avatar ? (
+              <Image loader={() => avatar} alt="User Avatar" className="rounded-full" src={avatar} width={280} height={340} />
+            ) : (
+              <p>Loading avatar...</p>
+            )}
+          </div>
+          <div className="flex-col">
+            <Button
+              component="label"
+              role={undefined}
+              variant="contained"
+              tabIndex={-1}
+              startIcon={<CloudUploadIcon />}
             >
-              Cancel
-            </button>
-            ): null
-          )} 
-        />
-      </Table>
-    </Modal>
-    )}
-    <form onSubmit={handleSubmit} className="flex mt-4 gap-4 p-2 bg-slate-700">
-      <div className="p-4 rounded-xl font-bold h-1/2 bg-slate-500 text-white">
-        <div className="w-72 h-72 relative rounded-md overflow-hidden mb-4">
-          {avatar ? (
-            <Image loader={() => avatar} alt="User Avatar" className="rounded-full" src={avatar} width={280} height={340} />
-          ) : (
-            <p>Loading avatar...</p>
-          )}
-        </div>
-        <div className="flex-col">
-          <Button
-            component="label"
-            role={undefined}
-            variant="contained"
-            tabIndex={-1}
-            startIcon={<CloudUploadIcon />}
-          >
-            Upload file
-            <VisuallyHiddenInput type="file" onChange={handleFileChange} />
-          </Button>
-          {preview && (
-            <div className="mt-4">
-              <img src={preview} alt="Preview" className="w-20 h-20 rounded-full" />
-              <button type="button" onClick={handleUpload} className="mt-2 p-2 bg-slate-600 text-white rounded-md hover:bg-sky-700">
-                Upload
-              </button>
-            </div>
-          )}
-          
-        </div>
-      </div>
+              Upload file
+              <VisuallyHiddenInput type="file" onChange={handleFileChange} />
+            </Button>
+            {preview && (
+              <div className="mt-4">
+                <img src={preview} alt="Preview" className="w-20 h-20 rounded-full" />
+                <button type="button" onClick={handleUpload} className="mt-2 p-2 bg-slate-600 text-white rounded-md hover:bg-sky-700">
+                  Upload
+                </button>
+              </div>
+            )}
 
-      <div className="flex-auto bg-slate-500 p-4 rounded-xl text-slate-950">
-        <div className="flex gap-10 mb-10">
-          <div className="flex flex-col w-1/2">
-            <label className="text-2xl">Username</label>
-            <input
-              className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
-              type="text"
-              name="userName"
-              value={user.userName}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="flex flex-col w-1/2">
-            <label className="text-2xl">FullName</label>
-            <input
-              className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
-              type="text"
-              name="fullName"
-              value={user.fullName}
-              onChange={handleChange}
-            />
           </div>
         </div>
-        <div className="flex gap-10 mb-10">
-          <div className="flex flex-col w-1/2">
-            <label className="text-2xl">Email</label>
-            <input
-              className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
-              type="email"
-              name="email"
-              value={user.email}
-              onChange={handleChange}
-            />
+
+        <div className="flex-auto bg-slate-500 p-4 rounded-xl text-slate-950">
+          <div className="flex gap-10 mb-10">
+            <div className="flex flex-col w-1/2">
+              <label className="text-2xl">Username</label>
+              <input
+                className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
+                type="text"
+                name="userName"
+                value={user.userName}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="flex flex-col w-1/2">
+              <label className="text-2xl">FullName</label>
+              <input
+                className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
+                type="text"
+                name="fullName"
+                value={user.fullName}
+                onChange={handleChange}
+              />
+            </div>
           </div>
-          <div className="flex flex-col w-1/2">
-            <label className="text-2xl">Phone</label>
-            <input
-              className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
-              type="tel"
-              name="phone"
-              value={user.phone}
-              onChange={handleChange}
-            />
+          <div className="flex gap-10 mb-10">
+            <div className="flex flex-col w-1/2">
+              <label className="text-2xl">Email</label>
+              <input
+                className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
+                type="email"
+                name="email"
+                value={user.email}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="flex flex-col w-1/2">
+              <label className="text-2xl">Phone</label>
+              <input
+                className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
+                type="tel"
+                name="phone"
+                value={user.phone}
+                onChange={handleChange}
+              />
+            </div>
           </div>
-        </div>
-        <div className="flex gap-10 mb-10">
-          <div className="flex flex-col w-1/2">
-            <label className="text-2xl">City</label>
+          <div className="flex gap-10 mb-10">
+            <div className="flex flex-col w-1/2">
+              <label className="text-2xl">City</label>
+              <select
+                className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
+                name="city"
+                value={user.city}
+                onChange={handleCityChange}
+              >
+                {city.map(country => (
+                  <option key={country} value={country}>
+                    {country}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col w-1/2">
+              <label className="text-2xl">Country</label>
+              <select
+                className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
+                name="country"
+                value={user.country}
+                onChange={handleCountryChange}
+              >
+                {countries.map(country => (
+                  <option key={country} value={country}>
+                    {country}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="flex gap-10 mb-10">
+            <label className="text-2xl">Gender</label>
             <select
               className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
-              name="city"
-              value={user.city}
-              onChange={handleCityChange}
+              name="gender"
+              value={user.gender}
+              onChange={handleChange}
             >
-              {city.map(country => (
-                <option key={country} value={country}>
-                  {country}
-                </option>
-              ))}
+              <option value={1}>Male</option>
+              <option value={2}>Female</option>
+              <option value={3}>Other</option>
             </select>
           </div>
-          <div className="flex flex-col w-1/2">
-            <label className="text-2xl">Country</label>
-            <select
-              className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
-              name="country"
-              value={user.country}
-              onChange={handleCountryChange}
+          {error && <p className="text-red-500 mb-4">{error}</p>}
+          <div className="flex flex-col mb-4">
+            <button
+              type="submit"
+              className="px-40 py-2 bg-slate-600 text-white rounded-md hover:bg-sky-700"
             >
-              {countries.map(country => (
-                <option key={country} value={country}>
-                  {country}
-                </option>
-              ))}
-            </select>
+              Update
+            </button>
           </div>
         </div>
-        <div className="flex gap-10 mb-10">
-          <label className="text-2xl">Gender</label>
-          <select
-            className="p-2 rounded-md text-xl bg-slate-300 text-gray-500"
-            name="gender"
-            value={user.gender}
-            onChange={handleChange}
-          >
-            <option value={1}>Nam</option>
-            <option value={2}>Nữ</option>
-            <option value={3}>Khác</option>
-          </select>
-        </div>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        <div className="flex flex-col mb-4">
-          <button
-            type="submit"
-            className="px-40 py-2 bg-slate-600 text-white rounded-md hover:bg-sky-700"
-          >
-            Update
-          </button>
-        </div>
-      </div>
-    </form>
+      </form>
     </>
   );
 };

@@ -18,7 +18,7 @@ const Page = () => {
       <main className="flex-1 md:col-span-4 bg-slate-700">
         <div className="w-full ">
           <div className="w-full bg-black opacity-60 text-white">
-            <Header services={services} isUser={true} />
+            <Header isUser={true} />
           </div>
         </div>
 

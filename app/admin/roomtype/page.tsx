@@ -206,6 +206,7 @@ const Page = () => {
             const res = await POST_UPLOAD(`v1/room_type/room_type/upload/${selectedRoomType?.id}`, formData);
             const data = res;
             if (res.error == 0) {
+                window.alert(res)
                 location.reload()
             } else {
                 setErrorMessage(data.message || "Failed to upload avatar");
@@ -351,7 +352,7 @@ const Page = () => {
                 <div className="bg-slate-800 p-5 rounded-lg">
                     <div className="flex items-center justify-between">
                         <Suspense>
-                        <Search placeholder="Search for a roomType..." onSearch={setSearchQuery} />
+                            <Search placeholder="Search for a roomType..." onSearch={setSearchQuery} />
                         </Suspense>
                     </div>
                     <table className="w-full divide-y divide-gray-700">

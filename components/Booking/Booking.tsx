@@ -79,10 +79,10 @@ const Booking = () => {
         const data = await res.data;
         setRoomType(data);
 
-        if (data.length > 0) {
-          const initialRoomTypeId = data[0].id; // Changed roomType.id to id
-          fetchRoomTypeImage(initialRoomTypeId);
-        }
+        // if (data.length > 0) {
+        //   const initialRoomTypeId = data[0].id; // Changed roomType.id to id
+        //   fetchRoomTypeImage(initialRoomTypeId);
+        // }
       } catch (error) {
         console.error("Error fetching data:", error);
         setError("Failed to fetch data");
@@ -103,6 +103,8 @@ const Booking = () => {
     }
   };
 
+  console.log("roomType: ", roomType)
+
   return (
     <div className="gap-4 p-2 bg-slate-500">
       <div className="grid grid-cols-2 gap-8">
@@ -114,6 +116,8 @@ const Booking = () => {
           >
             <div className="relative w-[45%] h-72 overflow-hidden mb-4">
               <Image
+                // @ts-ignore
+                loader={() => convertImagePath(roomtype.roomImage)}
                 // @ts-ignore
                 src={convertImagePath(roomtype.roomImage)}
                 alt={roomtype.name}
