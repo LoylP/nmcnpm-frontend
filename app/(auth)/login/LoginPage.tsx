@@ -168,11 +168,11 @@ const LoginPage = () => {
               </div>
 
               <div className="mb-4 mx-14">
-                <input type="checkbox" id="remember" className="mr-2" />
+                {/* <input type="checkbox" id="remember" className="mr-2" />
                 <label htmlFor="remember">Remember for 30 days</label>
                 <button className="font-medium text-base text-blue-800 mb-5 ml-20">
                   Forgot password
-                </button>
+                </button> */}
               </div>
 
               <div className="flex justify-end w-full">
