@@ -15,20 +15,22 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const router = useRouter();
-  const toggleShowPassword = () => {
+
+  const toggleShowPassword = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     setShowPassword(!showPassword);
   };
 
   const successMessage = (message: string) => {
     messageApi.open({
-      type: 'success',
+      type: "success",
       content: message,
     });
   };
 
   const error = (message: string) => {
     messageApi.open({
-      type: 'error',
+      type: "error",
       content: message,
     });
   };
@@ -47,18 +49,17 @@ const LoginPage = () => {
 
       console.log("data: ", data);
       if (data.error == 0) {
-        successMessage("Login successfully!")
+        successMessage("Login successfully!");
         setTimeout(() => {
           if (data.role_id === 1) {
             router.push("/admin");
           } else {
             router.push("/");
           }
-        }, 500)
+        }, 500);
       } else {
-        error(data.message)
+        error(data.message);
       }
-
     } catch (error) {
       console.error("Error logging in:", error);
       setErrorMessage("Something went wrong. Please try again.");
