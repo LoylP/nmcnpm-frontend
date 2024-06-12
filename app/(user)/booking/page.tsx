@@ -1,7 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import { GET } from "@/app/utils";
 import Menu from "../../../components/Nav/Menu";
 import Header from "../../../components/Nav/Header";
 import Booking from "../../../components/Booking/Booking";
@@ -9,7 +7,7 @@ import Booking from "../../../components/Booking/Booking";
 const Page = () => {
   const services = [
     {name: "Home", url: "/"},
-    {name: "Services", url: "#"},
+    {name: "Services", url: "/service"},
     {name: "Explore", url: "#"},
     {name: "Rules", url: "#"},
   ];

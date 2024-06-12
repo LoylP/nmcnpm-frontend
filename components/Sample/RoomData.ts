@@ -9,6 +9,10 @@ import Bar from "../../public/statics/images/bar.jpg";
 import Swim from "../../public/statics/images/swim.jpg";
 import Activities from "../../public/statics/images/activities.jpg";
 import Lobby from "../../public/statics/images/lobby.jpg";
+import Breakfast from "../../public/statics/images/breakfast.jpg";
+import Spa from "../../public/statics/images/spa.jpg";
+import BBQ from "../../public/statics/images/BBQ.jpg";
+
 import { StaticImageData } from "next/image";
 
 export interface Room {
@@ -20,7 +24,11 @@ export interface Room {
 export interface Space {
   src: StaticImageData;
   title: string;
-  type: string;
+}
+
+export interface Service {
+  src: StaticImageData;
+  title: string;
 }
 
 export const RoomData: Room[] = [
@@ -64,22 +72,30 @@ export const RoomData: Room[] = [
 export const SpaceData: Space[] = [
   {
     src: Lobby,
-    title: "Sảnh khách sạn",
-    type: "Lobby",
+    title: "Lobby",
   },
   {
     src: Swim,
-    title: "Hồ bơi",
-    type: "Service",
+    title: "Swim",
   },
   {
     src: Activities,
     title: "Activities",
-    type: "Service",
   },
   {
     src: Bar,
     title: "Bar",
-    type: "Service",
+  },
+  {
+    src: Breakfast,
+    title: "Breakfast",
+  },
+  {
+    src: Spa,
+    title: "Spa",
+  },
+  {
+    src: BBQ,
+    title: "BBQ",
   },
 ];
