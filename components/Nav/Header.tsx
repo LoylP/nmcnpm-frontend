@@ -24,9 +24,11 @@ const Header = ({
   const [password, setPassword] = useState("");
   const [truncated, setTruncated] = useState<string | null>(null);
   const [isLog, setIsLog] = useState<boolean>(false);
+  const [roleId, setRoleId] = useState<number | null>(null);
+
   useEffect(() => {
-    const user = getCookie("userName"); // Assuming the username is stored in a cookie named "userName"
-    console.log("user: ", user);
+    const user = getCookie("userName");
+    const role_id = parseInt(getCookie("role_id") as string);
 
     if (user) {
       setUsername(user as string);
@@ -40,6 +42,10 @@ const Header = ({
       }
 
       setIsLog(true);
+    }
+
+    if (!isNaN(role_id)) {
+      setRoleId(role_id);
     }
   }, []);
 
@@ -82,12 +88,12 @@ const Header = ({
           <>
             <div className="hidden lg:inline-flex gap-4 items-center text-black ml-auto">
               <BsSearch className="text-xl hover:text-hoverColor text-white" />
-              <button className="bg-green-600 border-radius rounded-2xl p-2 hover:bg-white "><Link href="../profile">
-                {" "}
-                <div className="text-white font-semibold">
-                  <p className="truncate">{truncated}</p>
-                </div>
-              </Link></button>
+              <button className="bg-green-600 border-radius rounded-2xl text-white p-2 hover:bg-white hover:text-black">
+                <Link href={roleId === 1 ? "/admin" : "/profile"}>
+                  <div className="font-semibold">
+                    <p className="truncate">{truncated}</p>
+                  </div>
+                </Link></button>
               <button onClick={handleLogout} className="bg-red-700 border-radius text-white rounded-2xl p-2 hover:bg-gray-700">
                 <div className="text-md">Logout</div>
               </button>
