@@ -8,8 +8,8 @@ const Page = () => {
   const services = [
     {name: "Home", url: "/"},
     {name: "Services", url: "/service"},
-    {name: "Explore", url: "#"},
-    {name: "Rules", url: "#"},
+    {name: "Explore", url: "/explore"},
+    {name: "Rules", url: "/rule"},
   ];
 
 

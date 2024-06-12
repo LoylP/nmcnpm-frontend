@@ -40,8 +40,8 @@ const Sample = () => {
       <h3 className="border-b border-primary mt-6 mb-6 pb-4">
         (Images are for illustrative purposes only.)
       </h3>
-      <div className="flex mx-auto my-10 bg-slate-900 rounded-2xl">
-        <div className="mx-auto relative overflow-hidden w-[70%]">
+      <div className="flex mx-auto my-10 bg-slate-900">
+        <div className="mx-auto relative overflow-hidden w-[80%]">
           <div
             className="flex transition-transform duration-500 ease-out"
             style={{ transform: `translateX(-${roomIndex * 100}%)` }}

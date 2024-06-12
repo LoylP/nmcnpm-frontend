@@ -18,6 +18,7 @@ interface User {
   city: string;
   country: string;
   gender: number;
+  salary: number;
 }
 
 interface Room {
@@ -125,7 +126,6 @@ const Info = () => {
           } else {
             paidString = "NO";
           }
-          console.log(billId, paidString)
           return {
             key: idx,
             id: cur.id,
@@ -192,6 +192,7 @@ const Info = () => {
         if (typeof (user.gender) === "string") {
           user.gender = parseInt(user.gender);
         }
+        user.salary = 1;
         const res = await PATCH("v1/user", user);
 
         if (!res.ok) {

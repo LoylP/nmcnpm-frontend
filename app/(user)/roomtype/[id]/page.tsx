@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 
 interface Room {
   id: number;
-  roomNumber: number;
+  roomNumber: number; 
   active: boolean;
   discount: number;
   booked: boolean;
