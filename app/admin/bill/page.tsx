@@ -59,7 +59,7 @@ interface BillDataType {
     checkIn: Date;
     priceAll: number | string;
     paid: string;
-    roomNumber: number
+    roomNumber: number | string
 }
 
 type DataIndex = keyof BillDataType;
@@ -72,7 +72,7 @@ interface BillExtractFromBackend {
     fullName: string;
     phone: string;
     email: string;
-    roomNumber: number
+    roomNumber: number | string;
 }
 
 const Page = () => {
@@ -105,6 +105,10 @@ const Page = () => {
             return;
         }
         const billData = data.data;
+        let roomNumber: string | number = "Deleted Room";
+        if (billData.roomDetail.room) {
+            roomNumber = billData.roomDetail.room.roomNumber;
+        }
         const billExtracted: BillExtractFromBackend = {
             id: billData.id,
             priceAll: billData.priceAll ?? billData.bill.priceAll,
@@ -113,7 +117,7 @@ const Page = () => {
             fullName: billData.roomDetail.user.fullName,
             phone: billData.roomDetail.user.phone,
             email: billData.roomDetail.user.email,
-            roomNumber: billData.roomDetail.room.roomNumber
+            roomNumber: roomNumber
         }
         setSelectedBill(billExtracted);
         sucess(`Get bill of roomDetail=${id} successfully!`)
@@ -162,6 +166,12 @@ const Page = () => {
                         paidString = cur.bill.paid ? "Paid" : "Not paid";
                         priceString = cur.bill.priceAll;
                     }
+
+                    let roomNumber: string | number = "Deleted Room";
+                    if (cur.room) {
+                        roomNumber = cur.room.roomNumber;
+                    }
+
                     return {
                         key: idx + cur.id,
                         id: cur.id,
@@ -172,7 +182,7 @@ const Page = () => {
                         priceAll: priceString,
                         checkIn: cur.checkIn,
                         paid: paidString,
-                        roomNumber: cur.room.roomNumber
+                        roomNumber: roomNumber
                     }
                 })
                 setBillsData(bills);

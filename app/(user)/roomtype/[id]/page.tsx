@@ -175,6 +175,7 @@ export default function Page({ params }: { params: { id: string } }) {
         }
         const roomData = await res.data;
         setRoom(roomData);
+        console.log(roomData)
       } catch (error) {
         console.error("Error fetching data:", error);
         setError("Failed to fetch data");

@@ -128,6 +128,7 @@ const Info = () => {
           } else {
             paidString = "NO";
           }
+          console.log(cur)
           return {
             key: idx,
             id: cur.id,

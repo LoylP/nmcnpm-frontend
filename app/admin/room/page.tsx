@@ -116,7 +116,7 @@ const Page = () => {
       );
       if (!confirmDelete) return;
 
-      const res = await DELETE({}, `v1/admin/room/${roomId}`);
+      const res = await PATCH(`v1/admin/room_deactive/${roomId}`, {});
       const data = await res.json()
       if (data.error == 0) {
         success("Deactive room successfully.");
@@ -150,9 +150,9 @@ const Page = () => {
   };
 
   // Filtered rooms based on search query and active filter
-  const filteredRooms = rooms.filter((room) => 
+  const filteredRooms = rooms.filter((room) =>
     (room.roomNumber.toString().includes(searchQuery) ||
-    room.roomType.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
+      room.roomType.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
     (activeFilter === "" || (activeFilter === "Yes" && room.active) || (activeFilter === "No" && !room.active))
   );
 
@@ -288,7 +288,7 @@ const Page = () => {
                     <td>
                       <button
                         onClick={() => {
-                          if (room.active){
+                          if (room.active) {
                             handleDelete(room.id)
                           } else {
                             handleActive(room.id)
@@ -305,7 +305,7 @@ const Page = () => {
             </table>
           </div>
         </div>
-      </div>  
+      </div>
     </>
   );
 };
