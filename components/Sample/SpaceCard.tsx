@@ -7,7 +7,7 @@ interface SpaceCardProps {
 }
 
 const SpaceCard: React.FC<SpaceCardProps> = ({ space, onSpaceClick }) => {
-  const { src, title, type } = space;
+  const { src, title } = space;
 
   return (
     <div className="card" onClick={() => onSpaceClick(space)}>
@@ -22,7 +22,6 @@ const SpaceCard: React.FC<SpaceCardProps> = ({ space, onSpaceClick }) => {
       </div>
       <div className="p-4 text-white bg-slate-800">
         <h4>{title}</h4>
-        <p>{type}</p>
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ import { Card, Typography } from "antd";
 import Search from "@/components/Dashboard/search/search";
 import { Space, SpaceData } from "@/components/Sample/RoomData";
 import SpaceCard from "@/components/Sample/SpaceCard";
-
+import { useRouter } from "next/navigation";
 
 interface Service {
   id: number;
@@ -31,12 +31,13 @@ const Page = () => {
   const [services, setServices] = useState<GroupedServices[]>([]);
   const [filteredServices, setFilteredServices] = useState<GroupedServices[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
 
   const headerServices = [
     { name: "Home", url: "/" },
     { name: "Booking", url: "/booking" },
-    { name: "Explore", url: "#" },
-    { name: "Rules", url: "#" },
+    { name: "Explore", url: "/explore" },
+    { name: "Rules", url: "/rule" },
   ];
 
 
@@ -66,6 +67,10 @@ const Page = () => {
     const fetchData = async () => {
       try {
         const res = await GET("v1/services");
+        if (res.statusCode == 401) {
+            router.push('/login');
+            return;
+        }
         const groupedServices = groupByPrice(res.data);
         setServices(groupedServices);
         setFilteredServices(groupedServices);
@@ -102,6 +107,10 @@ const Page = () => {
     return grouped;
   };
 
+  const handleThumbnailClick = (index: number) => {
+    setSpaceIndex(index); 
+  };
+
   return (
     <div className="flex min-h-screen bg-slate-700">
       <Menu />
@@ -113,9 +122,8 @@ const Page = () => {
           <Title level={2} className="text-center text-white mb-6">Our Services</Title>
           {errorMessage && <p className="text-red-500 text-center">{errorMessage}</p>}
 
-          <div className="flex mx-auto mb-6">
-            <div className="w-[6%]"></div>
-            <div className="relative overflow-hidden w-[45%]">
+          <div className="flex mb-6">
+            <div className="mx-auto relative overflow-hidden w-[70%]">
               <div
                 className="flex transition-transform duration-500 ease-out"
                 style={{ transform: `translateX(-${spaceIndex * 100}%)` }}
@@ -140,7 +148,24 @@ const Page = () => {
               </button>
             </div>
           </div>
-
+          <div className="mb-6 flex items-center justify-between mx-10">
+            <div className="mx-auto overflow-x-auto">
+                <div className="flex gap-4 p-4">
+                    {SpaceData.map((space, index) => (
+                        <div key={index} className="relative w-20 h-20 cursor-pointer" onClick={() => handleThumbnailClick(index)}>
+                            <Image
+                                src={space.src}
+                                alt={space.title}
+                                layout="fill"
+                                objectFit="cover"
+                                className="rounded-md"
+                            />
+                        </div>
+                     ))}
+                </div>
+            </div>
+        </div>
+        
           <div className="mb-6 flex items-center justify-between mx-10">
             <Suspense fallback={<div>Loading...</div>}>
               <Search placeholder="Search for a service..." onSearch={setSearchQuery} />
@@ -160,6 +185,7 @@ const Page = () => {
               </Card>
             ))}
           </div>
+          
         </div>
       </main>
     </div>
