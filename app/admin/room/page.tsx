@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState, Suspense } from "react";
-import { GET, POST, DELETE } from "@/app/utils";
+import { GET, POST, DELETE, PATCH } from "@/app/utils";
 import Add from "@/components/Dashboard/add/add";
 import Search from "@/components/Dashboard/search/search";
 import { useRouter } from "next/navigation";
@@ -31,6 +31,7 @@ const Page = () => {
   const [roomTypes, setRoomTypes] = useState<roomType[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [activeFilter, setActiveFilter] = useState<string>(""); // State for active filter
   const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -116,156 +117,196 @@ const Page = () => {
       if (!confirmDelete) return;
 
       const res = await DELETE({}, `v1/admin/room/${roomId}`);
-      if (res.ok) {
+      const data = await res.json()
+      if (data.error == 0) {
         success("Deactive room successfully.");
         setTimeout(() => location.reload(), 500)
       } else {
-        error("Something wrong happened, please try again later!")
+        error(data.message)
       }
     } catch (error) {
       console.error("Error deleting room:", error);
     }
   };
 
-  const filteredRooms = rooms.filter(
-    (room) =>
-      room.roomNumber.toString().includes(searchQuery) ||
-      room.roomType.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const handleActive = async (roomId: number) => {
+    try {
+      const confirmDelete = window.confirm(
+        "Are you sure you want to active this room?"
+      );
+      if (!confirmDelete) return;
+
+      const res = await PATCH(`v1/admin/room_active/${roomId}`, {});
+      const data = await res.json()
+      if (data.error == 0) {
+        success("Active room successfully.");
+        setTimeout(() => location.reload(), 500)
+      } else {
+        error(data.message)
+      }
+    } catch (error) {
+      console.error("Error deleting room:", error);
+    }
+  };
+
+  // Filtered rooms based on search query and active filter
+  const filteredRooms = rooms.filter((room) => 
+    (room.roomNumber.toString().includes(searchQuery) ||
+    room.roomType.name.toLowerCase().includes(searchQuery.toLowerCase())) &&
+    (activeFilter === "" || (activeFilter === "Yes" && room.active) || (activeFilter === "No" && !room.active))
   );
 
   return (
-    <div className="flex mt-auto">
-      <div className="w-1/3 mt-5">
-        <div className="p-4 justify-items-center">
-          <div className="justify-items-center bg-slate-500 px-3 py-3 rounded-lg shadow-lg mb-0 mx-auto text-black">
-            {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
-            <div>
-              <form onSubmit={handleSubmit}>
-                <div className="flex-col w-full justify-center">
-                  <div className="mb-4 mx-auto">
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-white"
-                    >
-                      RoomNumber
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      className="mt-1 p-2 w-full border rounded-md bg-gray-300"
-                      placeholder="RoomNumber..."
-                      value={roomNumber}
-                      onChange={(e) => setRoomNumber(e.target.value)}
-                    />
-                  </div>
+    <>
+      {contextHolder}
+      <div className="flex mt-auto">
+        <div className="w-1/3 mt-5">
+          <div className="p-4 justify-items-center">
+            <div className="justify-items-center bg-slate-500 px-3 py-3 rounded-lg shadow-lg mb-0 mx-auto text-black">
+              {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
+              <div>
+                <form onSubmit={handleSubmit}>
+                  <div className="flex-col w-full justify-center">
+                    <div className="mb-4 mx-auto">
+                      <label
+                        htmlFor="name"
+                        className="block text-sm font-medium text-white"
+                      >
+                        RoomNumber
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        className="mt-1 p-2 w-full border rounded-md bg-gray-300"
+                        placeholder="RoomNumber..."
+                        value={roomNumber}
+                        onChange={(e) => setRoomNumber(e.target.value)}
+                      />
+                    </div>
 
-                  <div className="mb-4 mx-auto">
-                    <label
-                      htmlFor="discount"
-                      className="block text-sm font-medium text-white"
-                    >
-                      Discount
-                    </label>
-                    <input
-                      type="text"
-                      id="discount"
-                      className="mt-1 p-2 w-full border rounded-md bg-gray-300"
-                      placeholder="Discount..."
-                      value={discount}
-                      onChange={(e) => setDiscount(e.target.value)}
-                    />
-                  </div>
+                    <div className="mb-4 mx-auto">
+                      <label
+                        htmlFor="discount"
+                        className="block text-sm font-medium text-white"
+                      >
+                        Discount
+                      </label>
+                      <input
+                        type="text"
+                        id="discount"
+                        className="mt-1 p-2 w-full border rounded-md bg-gray-300"
+                        placeholder="Discount..."
+                        value={discount}
+                        onChange={(e) => setDiscount(e.target.value)}
+                      />
+                    </div>
 
-                  <div className="mb-4 mx-auto">
-                    <label
-                      htmlFor="price"
-                      className="block text-sm font-medium text-white"
-                    >
-                      RoomTypeId
-                    </label>
-                    <select
-                      id="roomTypeId"
-                      className="mt-1 p-2 w-full border rounded-md bg-gray-300"
-                      value={roomTypeId}
-                      onChange={(e) => setRoomTypeId(e.target.value)}
-                    >
-                      <option value="">Select Room Type</option>
-                      {roomTypes.map((type) => (
-                        <option key={type.id} value={type.id}>
-                          {type.name}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="mb-4 mx-auto">
+                      <label
+                        htmlFor="price"
+                        className="block text-sm font-medium text-white"
+                      >
+                        RoomTypeId
+                      </label>
+                      <select
+                        id="roomTypeId"
+                        className="mt-1 p-2 w-full border rounded-md bg-gray-300"
+                        value={roomTypeId}
+                        onChange={(e) => setRoomTypeId(e.target.value)}
+                      >
+                        <option value="">Select Room Type</option>
+                        {roomTypes.map((type) => (
+                          <option key={type.id} value={type.id}>
+                            {type.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
-                </div>
-                <div className="w-full justify-center mb-4 p-4 mx-auto">
-                  <button
-                    type="submit"
-                    className="w-full p-2 bg-sky-800 text-white rounded-md hover:bg-slate-700"
-                  >
-                    Add Room
-                  </button>
-                </div>
-              </form>
+                  <div className="w-full justify-center mb-4 p-4 mx-auto">
+                    <button
+                      type="submit"
+                      className="w-full p-2 bg-sky-800 text-white rounded-md hover:bg-slate-700"
+                    >
+                      Add Room
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div className="w-2/3">
-        <div className="bg-slate-800 p-5 rounded-lg mt-10">
-          <div className="flex items-center justify-between">
-            <Suspense>
-              <Search placeholder="Search for a room..." onSearch={setSearchQuery} />
-            </Suspense>
-          </div>
-          <table className="w-full mt-3 divide-y">
-            <thead>
-              <tr className="text-green-400">
-                <th>Index</th>
-                <th>RoomNumber</th>
-                <th>Active</th>
-                <th>RoomTypeName</th>
-                <th>CreatedAt</th>
-                <th>UpdatedAt</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredRooms.map((room, idx) => (
-                <tr key={room.id}>
-                  <td>
-                    <Add content={idx} />
-                  </td>
-                  <td>
-                    <Add content={room.roomNumber} />
-                  </td>
-                  <td>
-                    <Add content={room.active ? "Yes" : "No"} />
-                  </td>
-                  <td>
-                    <Add content={room.roomType.name} />
-                  </td>
-                  <td>
-                    <Add content={new Date(room.createdAt).toLocaleDateString()} />
-                  </td>
-                  <td>
-                    <Add content={new Date(room.updatedAt).toLocaleDateString()} />
-                  </td>
-                  <td>
-                    <button
-                      onClick={() => handleDelete(room.id)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      Deactive
-                    </button>
-                  </td>
+        <div className="w-2/3">
+          <div className="bg-slate-800 p-5 rounded-lg mt-10">
+            <div className="flex items-center justify-between">
+              <Suspense>
+                <Search placeholder="Search for a room..." onSearch={setSearchQuery} />
+              </Suspense>
+              <select
+                className="p-2 bg-slate-600 border rounded-md"
+                value={activeFilter}
+                onChange={(e) => setActiveFilter(e.target.value)}
+              >
+                <option value="">All Active</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+            <table className="w-full mt-3 divide-y">
+              <thead>
+                <tr className="text-green-400">
+                  <th>Index</th>
+                  <th>RoomNumber</th>
+                  <th>Active</th>
+                  <th>RoomTypeName</th>
+                  <th>CreatedAt</th>
+                  <th>UpdatedAt</th>
+                  <th>Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredRooms.map((room, idx) => (
+                  <tr key={room.id}>
+                    <td>
+                      <Add content={idx} />
+                    </td>
+                    <td>
+                      <Add content={room.roomNumber} />
+                    </td>
+                    <td>
+                      <Add content={room.active ? "Yes" : "No"} />
+                    </td>
+                    <td>
+                      <Add content={room.roomType.name} />
+                    </td>
+                    <td>
+                      <Add content={new Date(room.createdAt).toLocaleDateString()} />
+                    </td>
+                    <td>
+                      <Add content={new Date(room.updatedAt).toLocaleDateString()} />
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => {
+                          if (room.active){
+                            handleDelete(room.id)
+                          } else {
+                            handleActive(room.id)
+                          }
+                        }}
+                        className={`${!room.active ? "text-green-500 hover:text-green-700" : "text-red-500 hover:text-red-700"}`}
+                      >
+                        {room.active ? "Deactive" : "Active"}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-    </div>
+      </div>  
+    </>
   );
 };
 

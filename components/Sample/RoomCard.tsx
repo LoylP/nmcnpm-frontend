@@ -11,7 +11,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onRoomClick }) => {
 
   return (
     <div className="card" onClick={() => onRoomClick(room)}>
-      <div className="relative w-full h-60">
+      <div className="relative w-full h-72">
         <Image
           src={src}
           alt={title}
@@ -20,7 +20,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onRoomClick }) => {
           className="rounded-md"
         />
       </div>
-      <div className="p-4 text-white bg-slate-700">
+      <div className="p-4 text-white bg-slate-800">
         <h4>{title}</h4>
         <p>{type}</p>
       </div>

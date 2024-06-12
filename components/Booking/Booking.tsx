@@ -122,13 +122,13 @@ const Booking = () => {
                 className="rounded-2xl"
               />
             </div>
-            <div className="relative w-full lg:w-[55%] h-72 p-4 flex flex-col justify-between">
+            <div className="relative w-full lg:w-[55%] p-4 flex flex-col justify-between">
               <div>
-                <b className="text-xl text-blue-800">{roomtype.name}</b>
+                <b className="text-xl text-amber-700">{roomtype.name}</b>
                 <div className="flex text-gray-700 mt-2">
                   <b className="mr-2 text-blue-800">Capacity:</b>{roomtype.capacity}
                 </div>
-                <div className="mt-2 text-gray-700 overflow-hidden text-ellipsis break-words">Description: {roomtype.desc}</div>
+                <div className="mt-2 text-gray-600 overflow-hidden text-ellipsis break-words"><b className="text-blue-800">Description:</b> {roomtype.desc}</div>
               </div>
               <div className="flex justify-end gap-2 mt-4">
                 <button className="bg-yellow-500 text-gray-600 px-2 rounded-2xl">

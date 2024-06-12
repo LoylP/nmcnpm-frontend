@@ -193,6 +193,13 @@ const Info = () => {
           user.gender = parseInt(user.gender);
         }
         const res = await PATCH("v1/user", user);
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error("Error response from server:", errorText);
+          throw new Error("Failed to update user");
+        }
+        
         const data = await res.json();
         if (data.status === 200) {
           setError(null);

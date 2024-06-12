@@ -258,7 +258,7 @@ export default function Page({ params }: { params: { id: string } }) {
     roomNumber: r.roomNumber,
     active: r.active,
     discount: r.discount,
-    available: !r.booked,
+    available: !r.booked && r.active,
   }));
 
   const onChange: TableProps<DataType>['onChange'] = (pagination, filters, sorter, extra) => {
