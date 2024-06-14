@@ -27,17 +27,16 @@ const RegisterPage = () => {
     });
   };
 
-  const errorMessageApi = () => {
+  const errorMessageApi = (error: string) => {
     messageApi.open({
       type: 'error',
-      content: 'Registration failed! Please try again.',
+      content: error,
     });
   };
 
   useEffect(() => {
     const fetchCountries = async () => {
       const all_countries = await GET_ALL_COUNTRY();
-      console.log(all_countries)
       if (all_countries) {
         setCountries(Array.from(all_countries.keys()));
         // setCity(countryResponse.get(user?.country))
@@ -74,7 +73,6 @@ const RegisterPage = () => {
       else genderId = 3;
       body.gender = genderId;
       const res = await POST({ body }, "v1/auth/register");
-
       const data = await res.json();
 
       if (data.error == 0) {
@@ -82,12 +80,15 @@ const RegisterPage = () => {
         setErrorMessage("");
         setTimeout(() => router.push("/login"), 500)
         return;
+      } else {
+        errorMessageApi(data.message)
+        return;
       }
 
     } catch (error) {
-      errorMessageApi()
-      console.error("Error registering:", error);
-      setErrorMessage("Something went wrong. Please try again.");
+      //@ts-ignore
+      errorMessageApi(error?.message)
+      setErrorMessage("Something went wrong!");
     }
   };
 

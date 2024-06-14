@@ -36,11 +36,11 @@ const menuItems = [
         path: "/admin/manage",
         icon: <GrUserAdmin />,
       },
-      {
-        title: "Revenue",
-        path: "/admin/revenue",
-        icon: <MdWork />,
-      },
+      // {
+      //   title: "Revenue",
+      //   path: "/admin/revenue",
+      //   icon: <MdWork />,
+      // },
     ],
   },
 ];
