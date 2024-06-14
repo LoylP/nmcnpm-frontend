@@ -98,18 +98,15 @@ const Page = () => {
       const res = await POST({ body }, "v1/admin/room");
       const data = await res.json();
 
-      console.log(data); // Ensure console.log works
-      location.reload(); // Reload to show new data
+      location.reload(); 
 
-      // Redirect or navigate the user to another page
-      // e.g., router.push("/dashboard");
     } catch (error) {
       console.error("Error registering:", error);
       setErrorMessage("Something went wrong. Please try again.");
     }
   };
 
-  const handleDelete = async (roomId: number) => {
+  const handleDeactive = async (roomId: number) => {
     try {
       const confirmDelete = window.confirm(
         "Are you sure you want to delete this room?"
@@ -140,6 +137,27 @@ const Page = () => {
       const data = await res.json()
       if (data.error == 0) {
         success("Active room successfully.");
+        setTimeout(() => location.reload(), 500)
+      } else {
+        error(data.message)
+      }
+    } catch (error) {
+      console.error("Error deleting room:", error);
+    }
+  };
+
+  const handleDelete = async (roomId: number) => {
+    try {
+      const confirmDelete = window.confirm(
+        "Are you sure you want to delete this room?"
+      );
+      if (!confirmDelete) return;
+
+      const res = await DELETE({},`v1/admin/room/${roomId}`);
+      console.log(res)
+      const data = await res.json()
+      if (data.error == 0) {
+        success("Delete room successfully.");
         setTimeout(() => location.reload(), 500)
       } else {
         error(data.message)
@@ -285,18 +303,21 @@ const Page = () => {
                     <td>
                       <Add content={new Date(room.updatedAt).toLocaleDateString()} />
                     </td>
-                    <td>
+                    <td >
                       <button
                         onClick={() => {
                           if (room.active) {
-                            handleDelete(room.id)
+                            handleDeactive(room.id)
                           } else {
                             handleActive(room.id)
                           }
                         }}
-                        className={`${!room.active ? "text-green-500 hover:text-green-700" : "text-red-500 hover:text-red-700"}`}
+                        className={`${!room.active ? "text-green-500 hover:text-green-700" : "text-yellow-500 hover:text-yellow-700"}`}
                       >
                         {room.active ? "Deactive" : "Active"}
+                      </button>
+                      <button className="ml-2 text-red-500 hover:text-red-700" onClick={() => handleDelete(room.id)}>
+                        Delete
                       </button>
                     </td>
                   </tr>

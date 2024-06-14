@@ -93,6 +93,7 @@ const Page = () => {
         setSelectedRoomDetailId(id);
         setOpen(true);
         const res = await POST({}, `v1/admin/roomdetail/bill/${id}`)
+        console.log(res)
         const data = await res.json();
         if (data.statusCode == 401) {
             router.push("/login");
