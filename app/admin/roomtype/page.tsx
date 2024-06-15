@@ -48,6 +48,20 @@ const Page = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const router = useRouter();
 
+    const success = (message: string) => {
+        messageApi.open({
+          type: 'success',
+          content: message,
+        });
+      };
+    
+      const errorMessageApi = (error: string) => {
+        messageApi.open({
+          type: 'error',
+          content: error,
+        });
+      };
+
     const showModal = (roomType: RoomType) => {
         setSelectedRoomType(roomType);
         setIsModalOpen(true);
@@ -133,6 +147,7 @@ const Page = () => {
         e.preventDefault();
 
         if (selectedServices.length === 0) {
+            errorMessageApi("Please select at least one service.")
             setErrorMessage("Please select at least one service.");
             return;
         }
@@ -150,9 +165,12 @@ const Page = () => {
             };
             const res = await POST({ body }, "v1/admin/room_type");
             const data = await res.json();
-            location.reload();
+            console.log(data)
+            success("Add roomtype successfully.")
+            setTimeout(() => location.reload(), 500)
         } catch (error) {
-            console.error("Error registering:", error);
+            // @ts-ignore
+            errorMessageApi(error.message)
             setErrorMessage("Something went wrong. Please try again.");
         }
     };
@@ -183,10 +201,14 @@ const Page = () => {
                 {},
                 `v1/admin/room_type/${roomtypeId}`
             );
-            if (res.ok) {
-                setRoomTypes(roomTypes.filter((room_type) => room_type.id !== roomtypeId));
+            const data = await res.json();
+            console.log("data", data)
+            if (data.error == 0) {
+                success("Delete successfully.")
+                setTimeout(() => setRoomTypes(roomTypes.filter((room_type) => room_type.id !== roomtypeId)), 500)
             } else {
-                console.error("Failed to delete roomtype:", await res.json());
+                errorMessageApi(data.message)
+                console.error("Failed to delete roomtype:", data.message);
             }
         } catch (error) {
             console.error("Error deleting roomtype:", error);
@@ -206,12 +228,15 @@ const Page = () => {
             const res = await POST_UPLOAD(`v1/room_type/room_type/upload/${selectedRoomType?.id}`, formData);
             const data = res;
             if (res.error == 0) {
-                location.reload()
+                success("Upload image successfully.")
+                setTimeout(() => location.reload(), 500);
             } else {
-                setErrorMessage(data.message || "Failed to upload avatar");
+                errorMessageApi(data.message || "Failed to upload image")
+                setErrorMessage(data.message || "Failed to upload image");
             }
         } catch (error) {
             console.error("Error uploading image:", error);
+            errorMessageApi("Failed to upload image")
             setErrorMessage("Failed to upload image");
         }
     };
@@ -244,6 +269,8 @@ const Page = () => {
     );
 
     return (
+        <>
+        {contextHolder}
         <div className="flex flex-col items-center mt-5">
             <div className="w-full max-w-4xl">
                 <div className="p-4 bg-slate-700 rounded-lg shadow-lg text-black">
@@ -470,6 +497,7 @@ const Page = () => {
                 </div>
             </div>
         </div>
+        </>
     );
 };
 
