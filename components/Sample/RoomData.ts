@@ -9,6 +9,22 @@ import Bar from "../../public/statics/images/bar.jpg";
 import Swim from "../../public/statics/images/swim.jpg";
 import Activities from "../../public/statics/images/activities.jpg";
 import Lobby from "../../public/statics/images/lobby.jpg";
+import Breakfast from "../../public/statics/images/breakfast.jpg";
+import Spa from "../../public/statics/images/spa.jpg";
+import BBQ from "../../public/statics/images/BBQ.jpg";
+import Acti from "../../public/statics/images/acti.jpg";
+import Acti2 from "../../public/statics/images/acti2.jpg";
+import Acti3 from "../../public/statics/images/acti3.jpg";
+import Beach from "../../public/statics/images/beach.jpg";
+import Chill from "../../public/statics/images/chill.jpg";
+import Forest from "../../public/statics/images/forest.jpg";
+import Pastiness from "../../public/statics/images/pastiness.jpg";
+import Restaurant from "../../public/statics/images/restau.jpg";
+import Slings from "../../public/statics/images/slings.jpg";
+import Swiming from "../../public/statics/images/swimhotel.jpg";
+import Waterfall from "../../public/statics/images/waterfall.jpg";
+import Game from "../../public/statics/images/games.jpg";
+
 import { StaticImageData } from "next/image";
 
 export interface Room {
@@ -20,7 +36,11 @@ export interface Room {
 export interface Space {
   src: StaticImageData;
   title: string;
-  type: string;
+}
+
+export interface Explore {
+  src: StaticImageData;
+  title: string;
 }
 
 export const RoomData: Room[] = [
@@ -64,22 +84,81 @@ export const RoomData: Room[] = [
 export const SpaceData: Space[] = [
   {
     src: Lobby,
-    title: "Sảnh khách sạn",
-    type: "Lobby",
+    title: "Lobby",
   },
   {
     src: Swim,
-    title: "Hồ bơi",
-    type: "Service",
+    title: "Swim",
   },
   {
     src: Activities,
     title: "Activities",
-    type: "Service",
   },
   {
     src: Bar,
     title: "Bar",
-    type: "Service",
+  },
+  {
+    src: Breakfast,
+    title: "Breakfast",
+  },
+  {
+    src: Spa,
+    title: "Spa",
+  },
+  {
+    src: BBQ,
+    title: "BBQ",
+  },
+];
+
+export const ExploreData: Explore[] = [
+  {
+    src: Chill,
+    title: "Space for chill",
+  },
+  {
+    src: Forest,
+    title: "Forest",
+  },
+  {
+    src: Swiming,
+    title: "Swim",
+  },
+  {
+    src: Game,
+    title: "Game",
+  },
+  {
+    src: Slings,
+    title: "Slings",
+  },
+  {
+    src: Restaurant,
+    title: "Restaurant",
+  },
+  {
+    src: Beach,
+    title: "Beach",
+  },
+  {
+    src: Pastiness,
+    title: "Pastiness",
+  },
+  {
+    src: Waterfall,
+    title: "Waterfall",
+  },
+  {
+    src: Acti,
+    title: "Activities",
+  },
+  {
+    src: Acti2,
+    title: "Activities",
+  },
+  {
+    src: Acti3,
+    title: "Activities",
   },
 ];

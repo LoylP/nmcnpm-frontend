@@ -7,11 +7,11 @@ interface SpaceCardProps {
 }
 
 const SpaceCard: React.FC<SpaceCardProps> = ({ space, onSpaceClick }) => {
-  const { src, title, type } = space;
+  const { src, title } = space;
 
   return (
     <div className="card" onClick={() => onSpaceClick(space)}>
-      <div className="relative w-full h-40">
+      <div className="relative w-full h-72">
         <Image
           src={src}
           alt={title}
@@ -20,9 +20,8 @@ const SpaceCard: React.FC<SpaceCardProps> = ({ space, onSpaceClick }) => {
           className="rounded-md"
         />
       </div>
-      <div className="p-4 text-white bg-sky-800">
+      <div className="p-4 text-white bg-slate-800">
         <h4>{title}</h4>
-        <p>{type}</p>
       </div>
     </div>
   );

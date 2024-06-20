@@ -1,15 +1,17 @@
 import { FaLocationDot } from "react-icons/fa6";
 import { SiHotelsdotcom } from "react-icons/si";
 
-const Index = () => (
+const Intro = () => (
   <div className="">
-    <h1 className="mt-6 text-cyan-900"> Introduce</h1>
+    <h1 id="Intro" className="mt-6 text-cyan-900">
+      <a href="#Intro">Introduction</a>
+    </h1>
     <div className="flex gap-x-4 mt-6 items-center text-black">
       <div className={`cursor-pointer text-3xl`}>
         <SiHotelsdotcom />
       </div>
       <h1 className={` origin-left font-medium text-xl`}>
-        HNP Hotel - Trung tâm sự kiện rất hân hạnh được phục vụ Quý Khách!
+        HNP Hotel - Event Center is honored to serve you!
       </h1>
     </div>
     <a
@@ -21,38 +23,36 @@ const Index = () => (
           <FaLocationDot />
         </div>
         <h1 className={` origin-left font-medium text-xl hover:bg-gray-400`}>
-          Đường Hàn Thuyên, khu phố 6 P, Thủ Đức, Thành phố Hồ Chí Minh, Vietnam
+          Han Thuyen Street, Ward 6, Thu Duc District, Ho Chi Minh City, Vietnam
         </h1>
       </div>
     </a>
 
     <h4 className="origin-left font-medium text-xl mt-6 pb-4 text-black ">
-      Giao điểm của văn hóa Á Đông - Sài Gòn. Một không gian hiện đại, tối giản
-      và gần gũi với thiên nhiên.
+      The intersection of Eastern culture - Saigon. A modern, minimalist space close to nature.
     </h4>
     <div>
       <h5 className="origin-left font-medium pb-4 text-black ">
-        ⭐️ Bữa sáng buffer tại nhà hàng khách sạn
+        ⭐️ Buffet breakfast at the hotel restaurant
       </h5>
       <h5 className="origin-left font-medium pb-4 text-black ">
-        ⭐️ Các dịch vụ được hưởng khi nhận phòng
+        ⭐️ Services enjoyed upon check-in
       </h5>
       <h5 className="origin-left font-medium pb-4 text-black ">
-        ⭐️ Miễn phí sử dụng bể bơi, khu trò chơi, bar
+        ⭐️ Free use of swimming pool, playground, bar
       </h5>
       <h5 className="origin-left font-medium pb-4 text-black ">
-        ⭐️ Nhận phòng sớm / trả phòng muộn, nâng hạng phòng tùy thuộc tình
-        trạng của khách sạn
+        ⭐️ Early check-in / late check-out, room upgrade depending on hotel availability
       </h5>
       <h5 className="origin-left font-medium pb-4 text-black ">
-        ⭐️ Tư vấn các tour du lịch các địa điểm ăn, chơi tại đây
+        ⭐️ Consultation on tours, dining, and entertainment destinations here
       </h5>
     </div>
 
     <h4 className="border-b border-primary font-medium text-xl text-black mb-6 pb-4">
-      Liên hệ Hotline: 09 - để được hỗ trợ sớm nhất.
+      Contact Hotline: 09 - for earliest assistance.
     </h4>
   </div>
 );
 
-export default Index;
+export default Intro;
